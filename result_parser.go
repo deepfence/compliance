@@ -1,7 +1,7 @@
 package compliance
 
 import (
-	"github.com/neuvector/neuvector/share"
+	"github.com/deepfence/compliance/share"
 	"strings"
 )
 

@@ -5,8 +5,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/deepfence/compliance/global"
-	"github.com/deepfence/compliance/system"
-	"github.com/neuvector/neuvector/share"
+	"github.com/deepfence/compliance/share"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"os"
@@ -89,10 +88,10 @@ func (b *Bench) RunScripts() ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-		args := []string{system.NSActRun, "-f", destPath,
+		args := []string{"run", "-f", destPath,
 			"-m", global.SYS.GetMountNamespacePath(1), "-n", global.SYS.GetNetNamespacePath(1)}
 		var errb, outb bytes.Buffer
-		cmd := exec.Command(system.ExecNSTool, args...)
+		cmd := exec.Command("/usr/local/bin/nstools", args...)
 		cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
 		cmd.Stdout = &outb
 		cmd.Stderr = &errb

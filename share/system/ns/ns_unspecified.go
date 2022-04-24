@@ -2,10 +2,6 @@
 
 package namespace
 
-import (
-	"errors"
-)
-
 func Set(ns *NsHandle) (err error) {
 	return ErrNotImplemented
 }

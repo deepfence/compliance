@@ -8,7 +8,7 @@ import (
 	"strings"
 	"unsafe"
 
-	"github.com/neuvector/neuvector/share/system/sysinfo/cpuid"
+	"github.com/deepfence/compliance/share/system/sysinfo/cpuid"
 )
 
 // https://en.wikipedia.org/wiki/CPUID#EAX.3D0:_Get_vendor_ID

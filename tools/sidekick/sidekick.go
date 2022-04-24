@@ -7,7 +7,7 @@ import (
 	"net"
 	"os"
 
-	sk "github.com/neuvector/neuvector/share/system/sidekick"
+	sk "github.com/deepfence/compliance/share/system/sidekick"
 )
 
 func verifyParentProcess() bool {
