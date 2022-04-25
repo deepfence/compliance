@@ -1,4 +1,4 @@
-package compliance
+package main
 
 import (
 	"flag"

@@ -1,4 +1,4 @@
-package compliance
+package main
 
 import (
 	"github.com/deepfence/compliance/share"
