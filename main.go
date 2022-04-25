@@ -7,6 +7,7 @@ import (
 
 func main() {
 	benchId := flag.String("bench-id", "", "The id of set of scripts to be run for compliance check")
+	flag.Parse()
 	config, err := LoadConfig()
 	if err != nil {
 		return
