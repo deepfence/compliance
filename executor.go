@@ -88,8 +88,8 @@ func (b *Bench) RunScripts() ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-		args := []string{"run", "-f", destPath,
-			"-m", global.SYS.GetMountNamespacePath(1), "-n", global.SYS.GetNetNamespacePath(1)}
+		args := []string{"run", "-f", destPath/*,
+			"-m", global.SYS.GetMountNamespacePath(1), "-n", global.SYS.GetNetNamespacePath(1)*/}
 		var errb, outb bytes.Buffer
 		cmd := exec.Command("/usr/local/bin/nstools", args...)
 		cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
