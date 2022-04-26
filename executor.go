@@ -126,6 +126,7 @@ func (b *Bench) RunScripts() ([]byte, error) {
 		for _, item := range items {
 			s, _ := json.Marshal(item)
 			fmt.Println(string(s))
+			fmt.Println(item)
 		}
 		return out, nil
 	}
