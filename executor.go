@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/deepfence/compliance/global"
 	"github.com/deepfence/compliance/share"
+	"github.com/deepfence/compliance/share/system"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"os"
@@ -88,10 +89,11 @@ func (b *Bench) RunScripts() ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-		args := []string{"run", "-f", destPath}
-		/*,
+		global.SYS = system.NewSystemTools()
+		args := []string{"run", "-f", destPath
+		,
 			"-m", global.SYS.GetMountNamespacePath(1), "-n", global.SYS.GetNetNamespacePath(1)}
-		*/
+
 		var errb, outb bytes.Buffer
 		cmd := exec.Command("/usr/local/bin/nstools", args...)
 		cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
