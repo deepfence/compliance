@@ -124,7 +124,7 @@ func (b *Bench) RunScripts() ([]byte, error) {
 		items := b.getBenchMsg(out)
 		fmt.Println("Sending items to stdout:")
 		for _, item := range items {
-			s, _ := json.Marshal(item)
+			s, _ := json.Marshal(*item)
 			fmt.Println(string(s))
 			fmt.Println(item)
 		}
