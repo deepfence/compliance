@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"github.com/deepfence/compliance/global"
 	"github.com/deepfence/compliance/share"
@@ -123,7 +124,8 @@ func (b *Bench) RunScripts() ([]byte, error) {
 		items := b.getBenchMsg(out)
 		fmt.Println("Sending items to stdout:")
 		for _, item := range items {
-			fmt.Println(item)
+			s, _ := json.Marshal(item)
+			fmt.Println(string(s))
 		}
 		return out, nil
 	}
