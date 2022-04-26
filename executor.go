@@ -95,7 +95,7 @@ func (b *Bench) RunScripts() ([]byte, error) {
 
 		var errb, outb bytes.Buffer
 		fmt.Println(args)
-		cmd := exec.Command("/usr/local/bin/nstools", args...)
+		cmd := exec.Command("bash", destPath)
 		cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
 		cmd.Stdout = &outb
 		cmd.Stderr = &errb
