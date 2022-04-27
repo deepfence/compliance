@@ -90,11 +90,9 @@ func (b *Bench) RunScripts() ([]byte, error) {
 			return nil, err
 		}
 		global.SYS = system.NewSystemTools()
-		args := []string{"run", "-f", destPath,
-			"-m", global.SYS.GetMountNamespacePath(1), "-n", global.SYS.GetNetNamespacePath(1)}
 
 		var errb, outb bytes.Buffer
-		fmt.Println(args)
+		//fmt.Println(args)
 		cmd := exec.Command("bash", destPath)
 		cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
 		cmd.Stdout = &outb
