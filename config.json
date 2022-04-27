@@ -28,5 +28,33 @@
       "version": "1.5.1",
       "isKubeMaster": true
     }
+  },
+  "hipaa": {
+    "files": [
+      "scripts/hipaa.tmpl"
+    ],
+    "name": "HIPAA Compliance Checks",
+    "desc": "HIPAA Compliance Checks"
+  },
+  "pci": {
+    "files": [
+      "scripts/pci.tmpl"
+    ],
+    "name": "PCI Compliance Checks",
+    "desc": "PCI Compliance Checks"
+  },
+  "gdpr": {
+    "files": [
+      "scripts/gdpr.tmpl"
+    ],
+    "name": "GDPR Compliance Checks",
+    "desc": "GDPR Compliance Checks"
+  },
+  "nist": {
+    "files": [
+      "scripts/nist.tmpl"
+    ],
+    "name": "NIST Compliance Checks",
+    "desc": "NIST Compliance Checks"
   }
 }

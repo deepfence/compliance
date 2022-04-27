@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/deepfence/compliance/global"
-	"github.com/deepfence/compliance/share"
 	"github.com/deepfence/compliance/share/system"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
@@ -29,15 +28,15 @@ type DockerReplaceOpts struct {
 }
 
 type benchItem struct {
-	level       string
-	testNum     string
-	group       string
-	header      string
-	profile     string // level 1, 2
-	scored      bool
-	automated   bool
-	message     []string
-	remediation string
+	Level       string
+	TestNum     string
+	Group       string
+	Header      string
+	Profile     string // level 1, 2
+	Scored      bool
+	Automated   bool
+	Message     []string
+	Remediation string
 }
 
 func (b *Bench) runScript() {
@@ -126,7 +125,6 @@ func (b *Bench) RunScripts() ([]byte, error) {
 		for _, item := range items {
 			s, _ := json.Marshal(*item)
 			fmt.Println(string(s))
-			fmt.Println(item)
 		}
 		return out, nil
 	}
@@ -176,8 +174,8 @@ func (b *Bench) getBenchMsg(out []byte) []*benchItem {
 		// the first line is the header and the rest form the message
 		line := scanner.Text()
 		if c, ok := b.parseBenchMsg(line); ok {
-			if c.testNum == "" && item != nil {
-				item.message = append(item.message, c.header)
+			if c.TestNum == "" && item != nil {
+				item.Message = append(item.Message, c.Header)
 			} else {
 				if item != nil {
 					// add the last item to the result
@@ -204,16 +202,16 @@ func (b *Bench) getBenchMsg(out []byte) []*benchItem {
 
 // check if last item should be accepted or ignored
 func (b *Bench) acceptBenchItem(last, item *benchItem) bool {
-	if last == nil {
+	/*if last == nil {
 		return false
 	}
 	// 1.2 should be ignored if the next line has 1.2. prefix
-	if item != nil && strings.HasPrefix(item.testNum, fmt.Sprintf("%s.", last.testNum)) {
+	if item != nil && strings.HasPrefix(item.TestNum, fmt.Sprintf("%s.", last.TestNum)) {
 		return false
 	}
 	// Ignore NOTE and INFO entries
-	if last.level == share.BenchLevelNote || last.level == share.BenchLevelInfo {
+	if last.Level == share.BenchLevelNote || last.Level == share.BenchLevelInfo {
 		return false
-	}
+	}*/
 	return true
 }
