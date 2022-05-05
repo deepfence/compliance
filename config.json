@@ -16,7 +16,7 @@
     "conditions": {
       "version": "1.6.0"
     },
-    "remediation":
+    "remediation": ""
   },
   "kubeBench1.5.1": {
     "files": [
@@ -39,7 +39,7 @@
     "conditions": {
       "version": "1.6.0"
     },
-    "remediation":
+    "remediation": ""
   },
   "hipaaKubeBench1.5.1": {
     "files": [
