@@ -15,12 +15,35 @@
     "desc": "Bench Test for Kube 1.6.0",
     "conditions": {
       "version": "1.6.0"
-    }
+    },
+    "remediation":
   },
   "kubeBench1.5.1": {
     "files": [
-      "kube_master_1_5_1.tmpl",
-      "kube_worker_1_5_1.tmpl"
+      "kube_master_1_5_1.tmpl"
+    ],
+    "name": "Kubernetes 1.5.1 Bench Test",
+    "desc": "Bench Test for Kube 1.5.1",
+    "conditions": {
+      "version": "1.5.1",
+      "isKubeMaster": true
+    }
+  },
+  "hipaaKubeBench1.6.0": {
+    "files": [
+      "kube_master_1_6_0.tmpl",
+      "kube_worker_1_6_0.tmpl"
+    ],
+    "name": "Kubernetes 1.6.0 Bench Test",
+    "desc": "Bench Test for Kube 1.6.0",
+    "conditions": {
+      "version": "1.6.0"
+    },
+    "remediation":
+  },
+  "hipaaKubeBench1.5.1": {
+    "files": [
+      "kube_master_1_5_1.tmpl"
     ],
     "name": "Kubernetes 1.5.1 Bench Test",
     "desc": "Bench Test for Kube 1.5.1",

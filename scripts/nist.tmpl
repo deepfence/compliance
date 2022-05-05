@@ -2,6 +2,7 @@ source ./scripts/common.sh
 source ./scripts/docker-bench-security/tests/1_host_configuration.sh
 source ./scripts/docker-bench-security/tests/2_docker_daemon_configuration.sh
 source ./scripts/docker-bench-security/tests/3_docker_daemon_configuration_files.sh
+source ./scripts/docker-bench-security/tests/4_container_images.sh
 source ./scripts/docker-bench-security/tests/5_container_runtime.sh
 
 check_1_2_2
@@ -40,6 +41,8 @@ check_3_19
 check_3_20
 check_3_21
 check_3_22
+
+check_4_8
 
 
 check_5_4
