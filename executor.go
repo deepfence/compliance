@@ -5,8 +5,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/deepfence/compliance/global"
-	"github.com/deepfence/compliance/share/system"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"os"
@@ -89,7 +87,6 @@ func (b *Bench) RunScripts() ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-		global.SYS = system.NewSystemTools()
 
 		var errb, outb bytes.Buffer
 		//fmt.Println(args)
@@ -104,10 +101,8 @@ func (b *Bench) RunScripts() ([]byte, error) {
 			log.WithFields(log.Fields{"error": err, "msg": errb.String()}).Error("Start")
 			return nil, err
 		}
-		pgid := cmd.Process.Pid
 		// global.SYS.AddToolProcess(pgid, 1, "host-bench", destPath)
 		err = cmd.Wait()
-		global.SYS.RemoveToolProcess(pgid, false)
 		out := outb.Bytes()
 
 		b.childCmd = nil

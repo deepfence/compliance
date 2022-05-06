@@ -12,7 +12,7 @@ type Script struct {
 	Desc string `json:"desc"`
 }
 
-const configFile = "config.json"
+const configFile = "/usr/local/bin/compliance_check/config.json"
 
 func LoadConfig() (map[string]Script, error) {
 	configFile, err := os.Open(configFile)

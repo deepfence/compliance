@@ -54,7 +54,7 @@
   },
   "hipaa": {
     "files": [
-      "scripts/hipaa.tmpl"
+      "/usr/local/bin/compliance_check/scripts/hipaa.tmpl"
     ],
     "name": "HIPAA Compliance Checks",
     "desc": "HIPAA Compliance Checks"
