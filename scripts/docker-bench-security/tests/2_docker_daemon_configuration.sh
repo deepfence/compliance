@@ -205,7 +205,7 @@ check_2_8() {
 check_2_9() {
   local id="2.9"
   local desc="Enable user namespace support (Scored)"
-  local remediation="Please consult the Docker documentation for various ways in which this can be configured depending upon your requirements. The high-level steps are: Ensure that the files /etc/subuid and /etc/subgid exist. Start the docker daemon with --userns-remap flag."
+  local remediation="Please consult the Docker documentation for various ways in which this can be configured depending upon your requirements. The high-level steps are: Ensure that the files /fenced/mnt/host/etc/subuid and /fenced/mnt/host/etc/subgid exist. Start the docker daemon with --userns-remap flag."
   local remediationImpact="User namespace remapping is incompatible with a number of Docker features and also currently breaks some of its functionalities."
   local check="$id - $desc"
   starttestjson "$id" "$desc"

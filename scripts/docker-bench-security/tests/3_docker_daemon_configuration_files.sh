@@ -111,13 +111,13 @@ check_3_4() {
 
 check_3_5() {
   local id="3.5"
-  local desc="Ensure that the /etc/docker directory ownership is set to root:root (Automated)"
-  local remediation="You should run the following command: chown root:root /etc/docker. This sets the ownership and group ownership for the directory to root."
+  local desc="Ensure that the /fenced/mnt/host/etc/docker directory ownership is set to root:root (Automated)"
+  local remediation="You should run the following command: chown root:root /fenced/mnt/host/etc/docker. This sets the ownership and group ownership for the directory to root."
   local remediationImpact="None."
   local check="$id - $desc"
   starttestjson "$id" "$desc"
 
-  directory="/etc/docker"
+  directory="/fenced/mnt/host/etc/docker"
   if [ -d "$directory" ]; then
     if [ "$(stat -c %u%g $directory)" -eq 00 ]; then
       pass -s "$check"
@@ -136,13 +136,13 @@ check_3_5() {
 
 check_3_6() {
   local id="3.6"
-  local desc="Ensure that /etc/docker directory permissions are set to 755 or more restrictively (Automated)"
-  local remediation="You should run the following command: chmod 755 /etc/docker. This sets the permissions for the directory to 755."
+  local desc="Ensure that /fenced/mnt/host/etc/docker directory permissions are set to 755 or more restrictively (Automated)"
+  local remediation="You should run the following command: chmod 755 /fenced/mnt/host/etc/docker. This sets the permissions for the directory to 755."
   local remediationImpact="None."
   local check="$id - $desc"
   starttestjson "$id" "$desc"
 
-  directory="/etc/docker"
+  directory="/fenced/mnt/host/etc/docker"
   if [ -d "$directory" ]; then
     if [ "$(stat -c %a $directory)" -le 755 ]; then
       pass -s "$check"
@@ -162,12 +162,12 @@ check_3_6() {
 check_3_7() {
   local id="3.7"
   local desc="Ensure that registry certificate file ownership is set to root:root (Automated)"
-  local remediation="You should run the following command: chown root:root /etc/docker/certs.d/<registry-name>/*. This would set the individual ownership and group ownership for the registry certificate files to root."
+  local remediation="You should run the following command: chown root:root /fenced/mnt/host/etc/docker/certs.d/<registry-name>/*. This would set the individual ownership and group ownership for the registry certificate files to root."
   local remediationImpact="None."
   local check="$id - $desc"
   starttestjson "$id" "$desc"
 
-  directory="/etc/docker/certs.d/"
+  directory="/fenced/mnt/host/etc/docker/certs.d/"
   if [ -d "$directory" ]; then
     fail=0
     owners=$(find "$directory" -type f -name '*.crt')
@@ -194,12 +194,12 @@ check_3_7() {
 check_3_8() {
   local id="3.8"
   local desc="Ensure that registry certificate file permissions are set to 444 or more restrictively (Automated)"
-  local remediation="You should run the following command: chmod 444 /etc/docker/certs.d/<registry-name>/*. This would set the permissions for the registry certificate files to 444."
+  local remediation="You should run the following command: chmod 444 /fenced/mnt/host/etc/docker/certs.d/<registry-name>/*. This would set the permissions for the registry certificate files to 444."
   local remediationImpact="None."
   local check="$id - $desc"
   starttestjson "$id" "$desc"
 
-  directory="/etc/docker/certs.d/"
+  directory="/fenced/mnt/host/etc/docker/certs.d/"
   if [ -d "$directory" ]; then
     fail=0
     perms=$(find "$directory" -type f -name '*.crt')
@@ -444,12 +444,12 @@ check_3_16() {
 check_3_17() {
   local id="3.17"
   local desc="Ensure that the daemon.json file ownership is set to root:root (Automated)"
-  local remediation="You should run the following command: chown root:root /etc/docker/daemon.json. This sets the ownership and group ownership for the file to root."
+  local remediation="You should run the following command: chown root:root /fenced/mnt/host/etc/docker/daemon.json. This sets the ownership and group ownership for the file to root."
   local remediationImpact="None."
   local check="$id - $desc"
   starttestjson "$id" "$desc"
 
-  file="/etc/docker/daemon.json"
+  file="/fenced/mnt/host/etc/docker/daemon.json"
   if [ -f "$file" ]; then
     if [ "$(stat -c %U:%G $file)" = 'root:root' ]; then
       pass -s "$check"
@@ -469,12 +469,12 @@ check_3_17() {
 check_3_18() {
   local id="3.18"
   local desc="Ensure that daemon.json file permissions are set to 644 or more restrictive (Automated)"
-  local remediation="You should run the following command: chmod 644 /etc/docker/daemon.json. This sets the file permissions for this file to 644."
+  local remediation="You should run the following command: chmod 644 /fenced/mnt/host/etc/docker/daemon.json. This sets the file permissions for this file to 644."
   local remediationImpact="None."
   local check="$id - $desc"
   starttestjson "$id" "$desc"
 
-  file="/etc/docker/daemon.json"
+  file="/fenced/mnt/host/etc/docker/daemon.json"
   if [ -f "$file" ]; then
     if [ "$(stat -c %a $file)" -le 644 ]; then
       pass -s "$check"
@@ -493,13 +493,13 @@ check_3_18() {
 
 check_3_19() {
   local id="3.19"
-  local desc="Ensure that the /etc/default/docker file ownership is set to root:root (Automated)"
-  local remediation="You should run the following command: chown root:root /etc/default/docker. This sets the ownership and group ownership of the file to root."
+  local desc="Ensure that the /fenced/mnt/host/etc/default/docker file ownership is set to root:root (Automated)"
+  local remediation="You should run the following command: chown root:root /fenced/mnt/host/etc/default/docker. This sets the ownership and group ownership of the file to root."
   local remediationImpact="None."
   local check="$id - $desc"
   starttestjson "$id" "$desc"
 
-  file="/etc/default/docker"
+  file="/fenced/mnt/host/etc/default/docker"
   if [ -f "$file" ]; then
     if [ "$(stat -c %U:%G $file)" = 'root:root' ]; then
       pass -s "$check"
@@ -518,13 +518,13 @@ check_3_19() {
 
 check_3_20() {
   local id="3.20"
-  local desc="Ensure that the /etc/sysconfig/docker file permissions are set to 644 or more restrictively (Automated)"
-  local remediation="You should run the following command: chmod 644 /etc/sysconfig/docker. This sets the file permissions for this file to 644."
+  local desc="Ensure that the /fenced/mnt/host/etc/sysconfig/docker file permissions are set to 644 or more restrictively (Automated)"
+  local remediation="You should run the following command: chmod 644 /fenced/mnt/host/etc/sysconfig/docker. This sets the file permissions for this file to 644."
   local remediationImpact="None."
   local check="$id - $desc"
   starttestjson "$id" "$desc"
 
-  file="/etc/sysconfig/docker"
+  file="/fenced/mnt/host/etc/sysconfig/docker"
   if [ -f "$file" ]; then
     if [ "$(stat -c %a $file)" -le 644 ]; then
       pass -s "$check"
@@ -543,13 +543,13 @@ check_3_20() {
 
 check_3_21() {
   local id="3.21"
-  local desc="Ensure that the /etc/sysconfig/docker file ownership is set to root:root (Automated)"
-  local remediation="You should run the following command: chown root:root /etc/sysconfig/docker. This sets the ownership and group ownership for the file to root."
+  local desc="Ensure that the /fenced/mnt/host/etc/sysconfig/docker file ownership is set to root:root (Automated)"
+  local remediation="You should run the following command: chown root:root /fenced/mnt/host/etc/sysconfig/docker. This sets the ownership and group ownership for the file to root."
   local remediationImpact="None."
   local check="$id - $desc"
   starttestjson "$id" "$desc"
 
-  file="/etc/sysconfig/docker"
+  file="/fenced/mnt/host/etc/sysconfig/docker"
   if [ -f "$file" ]; then
     if [ "$(stat -c %U:%G $file)" = 'root:root' ]; then
       pass -s "$check"
@@ -568,13 +568,13 @@ check_3_21() {
 
 check_3_22() {
   local id="3.22"
-  local desc="Ensure that the /etc/default/docker file permissions are set to 644 or more restrictively (Automated)"
-  local remediation="You should run the following command: chmod 644 /etc/default/docker. This sets the file permissions for this file to 644."
+  local desc="Ensure that the /fenced/mnt/host/etc/default/docker file permissions are set to 644 or more restrictively (Automated)"
+  local remediation="You should run the following command: chmod 644 /fenced/mnt/host/etc/default/docker. This sets the file permissions for this file to 644."
   local remediationImpact="None."
   local check="$id - $desc"
   starttestjson "$id" "$desc"
 
-  file="/etc/default/docker"
+  file="/fenced/mnt/host/etc/default/docker"
   if [ -f "$file" ]; then
     if [ "$(stat -c %a $file)" -le 644 ]; then
       pass -s "$check"

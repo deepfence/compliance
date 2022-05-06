@@ -196,7 +196,7 @@ check_5_5() {
   sensitive_dirs='/
 /boot
 /dev
-/etc
+/fenced/mnt/host/etc
 /lib
 /proc
 /sys
