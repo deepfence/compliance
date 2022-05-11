@@ -1,7 +1,7 @@
 {
   "dockerCheckPrerequisites": {
     "files": [
-      "scripts/host.tmpl"
+      "scripts/host.sh"
     ],
     "name": "Docker Bench Tests",
     "desc": "Docker CIS benchmark tests"
@@ -54,28 +54,28 @@
   },
   "hipaa": {
     "files": [
-      "/usr/local/bin/compliance_check/scripts/hipaa.tmpl"
+      "/usr/local/bin/compliance_check/scripts/hipaa.sh"
     ],
     "name": "HIPAA Compliance Checks",
     "desc": "HIPAA Compliance Checks"
   },
   "pci": {
     "files": [
-      "scripts/pci.tmpl"
+      "/usr/local/bin/compliance_check/scripts/pci.sh"
     ],
     "name": "PCI Compliance Checks",
     "desc": "PCI Compliance Checks"
   },
   "gdpr": {
     "files": [
-      "scripts/gdpr.tmpl"
+      "/usr/local/bin/compliance_check/scripts/gdpr.sh"
     ],
     "name": "GDPR Compliance Checks",
     "desc": "GDPR Compliance Checks"
   },
   "nist": {
     "files": [
-      "scripts/nist.tmpl"
+      "/usr/local/bin/compliance_check/scripts/nist.sh"
     ],
     "name": "NIST Compliance Checks",
     "desc": "NIST Compliance Checks"

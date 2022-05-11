@@ -37,56 +37,8 @@ type benchItem struct {
 	Remediation string
 }
 
-func (b *Bench) runScript() {
-	/*var errb, outb bytes.Buffer
-	args := []string{
-		system.NSActRun, "-f", script,
-		"-m", global.SYS.GetMountNamespacePath(1),
-		"-n", global.SYS.GetNetNamespacePath(1),
-	}
-	log.WithFields(log.Fields{"type": bench}).Debug("Running Kubernetes CIS bench")
-	cmd := exec.Command(system.ExecNSTool, args...)
-	cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
-	cmd.Stdout = &outb
-	cmd.Stderr = &errb
-	b.childCmd = cmd
-	err := cmd.Start()
-	if err != nil {
-		log.WithFields(log.Fields{"error": err, "msg": errb.String()}).Error("Start")
-		return nil, err
-	}
-	pgid := cmd.Process.Pid
-	global.SYS.AddToolProcess(pgid, 1, "kube-bench", script)
-	err = cmd.Wait()
-	global.SYS.RemoveToolProcess(pgid, false)
-	out := outb.Bytes()
-
-	b.childCmd = nil
-	if err != nil {
-		if ee, ok := err.(*exec.ExitError); ok {
-			status := global.SYS.GetExitStatus(ee)
-			if status == 2 {
-				// Not a master or worker node, ignore the error
-				log.WithFields(log.Fields{"msg": errb.String()}).Debug("Done")
-				return nil, fmt.Errorf("Node type not recognized")
-			}
-		}
-
-		log.WithFields(log.Fields{"error": err, "msg": errb.String()}).Error("")
-		return nil, err
-	}
-
-	log.WithFields(log.Fields{"type": bench}).Debug("Finish Kubernetes CIS bench")
-	return out, nil*/
-}
-
 func (b *Bench) RunScripts() ([]byte, error) {
-	for _, tmplFile := range b.script.Files {
-		destPath := strings.Replace(tmplFile, ".tmpl", ".sh", -1)
-		err := b.replaceTemplateVars(tmplFile, destPath, nil)
-		if err != nil {
-			return nil, err
-		}
+	for _, destPath := range b.script.Files {
 
 		var errb, outb bytes.Buffer
 		//fmt.Println(args)
@@ -96,7 +48,7 @@ func (b *Bench) RunScripts() ([]byte, error) {
 		cmd.Stderr = &errb
 		b.childCmd = cmd
 
-		err = cmd.Start()
+		err := cmd.Start()
 		if err != nil {
 			log.WithFields(log.Fields{"error": err, "msg": errb.String()}).Error("Start")
 			return nil, err
