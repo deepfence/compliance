@@ -34,7 +34,7 @@ check_1_1_1() {
     logcheckresult "PASS"
     return
   fi
-  warn -s "$check"
+  warn -s "$check" "$remediation" "$remediationImpact"
   logcheckresult "WARN"
 }
 

@@ -57,27 +57,31 @@
       "/usr/local/bin/compliance_check/scripts/hipaa.sh"
     ],
     "name": "HIPAA Compliance Checks",
-    "desc": "HIPAA Compliance Checks"
+    "desc": "HIPAA Compliance Checks",
+    "variables": ["pathPrefix"]
   },
   "pci": {
     "files": [
       "/usr/local/bin/compliance_check/scripts/pci.sh"
     ],
     "name": "PCI Compliance Checks",
-    "desc": "PCI Compliance Checks"
+    "desc": "PCI Compliance Checks",
+    "variables": ["pathPrefix"]
   },
   "gdpr": {
     "files": [
       "/usr/local/bin/compliance_check/scripts/gdpr.sh"
     ],
     "name": "GDPR Compliance Checks",
-    "desc": "GDPR Compliance Checks"
+    "desc": "GDPR Compliance Checks",
+    "variables": ["pathPrefix"]
   },
   "nist": {
     "files": [
       "/usr/local/bin/compliance_check/scripts/nist.sh"
     ],
     "name": "NIST Compliance Checks",
-    "desc": "NIST Compliance Checks"
+    "desc": "NIST Compliance Checks",
+    "variables": ["pathPrefix"]
   }
 }
