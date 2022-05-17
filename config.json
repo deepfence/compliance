@@ -83,5 +83,13 @@
     "name": "NIST Compliance Checks",
     "desc": "NIST Compliance Checks",
     "variables": ["pathPrefix"]
+  },
+  "hipaakube": {
+    "files": [
+      "/usr/local/bin/compliance_check/scripts/hipaakube.sh"
+    ],
+    "name": "HIPAA Compliance Checks",
+    "desc": "HIPAA Compliance Checks",
+    "variables": ["pathPrefix"]
   }
 }
