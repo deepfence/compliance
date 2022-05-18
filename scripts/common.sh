@@ -303,3 +303,17 @@ get_service_file() {
   fi
   echo "/usr/lib/systemd/system/$SERVICE"
 }
+
+#get an argument value from command line
+get_argument_value() {
+    CMD="$1"
+    OPTION="$2"
+
+    get_command_line_args "$CMD" |
+    sed \
+        -e 's/\-\-/\n--/g' \
+        |
+    grep "^${OPTION}" |
+    sed \
+        -e "s/^${OPTION}=//g"
+}
