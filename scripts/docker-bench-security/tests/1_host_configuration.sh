@@ -44,7 +44,8 @@ check_1_1_2() {
   local desc="Ensure only trusted users are allowed to control Docker daemon (Automated)"
   local remediation="You should remove any untrusted users from the docker group using command sudo gpasswd -d <your-user> docker or add trusted users to the docker group using command sudo usermod -aG docker <your-user>. You should not create a mapping of sensitive directories from the host to container volumes."
   local remediationImpact="Only trust user are allow to build and execute containers as normal user."
-  local check="$id - $desc"
+  local testCategory="User Settings"
+  local check="$id - $desc - $testCategory"
   starttestjson "$id" "$desc"
 
   docker_users=$(grep 'docker' /fenced/mnt/host/etc/group)
