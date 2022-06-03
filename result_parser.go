@@ -62,14 +62,14 @@ func (b *Bench) parseBenchMsg(line string) (*benchItem, bool) {
 	msg = strings.TrimSpace(msg)
 	var testCategory, remediation, remediationImpact string
 	data := strings.Split(msg, "-")
-	if len(data) > 0 {
-		testCategory = data[0]
-	}
 	if len(data) > 1 {
-		remediation = data[1]
+		testCategory = data[1]
 	}
 	if len(data) > 2 {
-		remediationImpact = data[2]
+		remediation = data[2]
+	}
+	if len(data) > 3 {
+		remediationImpact = data[3]
 	}
 
 	return &benchItem{
