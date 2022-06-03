@@ -4,15 +4,15 @@ source ./scripts/docker-bench-security/tests/2_docker_daemon_configuration.sh
 source ./scripts/docker-bench-security/tests/3_docker_daemon_configuration_files.sh
 source ./scripts/docker-bench-security/tests/5_container_runtime.sh
 
-check_1_2_2
-check_1_1_18
+check_1_1_3
+check_1_1_4
 check_1_1_5
 check_1_1_6
 check_1_1_7
 check_1_1_9
 check_1_1_10
-check_1_1_13
-check_1_1_14
+check_1_1_11
+check_1_1_12
 
 check_2_5
 check_2_7

@@ -36,6 +36,8 @@ type benchItem struct {
 	Automated   bool
 	Message     []string
 	Remediation string
+	RemediationImpact string
+	TestCategory string
 }
 
 func (b *Bench) RunScripts() ([]byte, error) {

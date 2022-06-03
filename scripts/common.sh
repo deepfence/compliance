@@ -317,3 +317,15 @@ get_argument_value() {
     sed \
         -e "s/^${OPTION}=//g"
 }
+
+#check whether an argument exist in command line
+check_argument() {
+    CMD="$1"
+    OPTION="$2"
+
+    get_command_line_args "$CMD" |
+    sed \
+        -e 's/\-\-/\n--/g' \
+        |
+    grep "^${OPTION}"
+}

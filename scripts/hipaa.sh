@@ -5,7 +5,7 @@ source /usr/local/bin/compliance_check/scripts/docker-bench-security/tests/2_doc
 source /usr/local/bin/compliance_check/scripts/docker-bench-security/tests/3_docker_daemon_configuration_files.sh
 source /usr/local/bin/compliance_check/scripts/docker-bench-security/tests/5_container_runtime.sh
 
-check_1_2_2
+check_1_1_2
 check_1_1_18
 check_1_1_5
 check_1_1_6

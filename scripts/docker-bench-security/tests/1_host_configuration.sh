@@ -21,7 +21,8 @@ check_1_1_1() {
   local desc="Ensure a separate partition for containers has been created (Automated)"
   local remediation="For new installations, you should create a separate partition for the /var/lib/docker mount point. For systems that have already been installed, you should use the Logical Volume Manager (LVM) within Linux to create a new partition."
   local remediationImpact="None."
-  local check="$id - $desc"
+  local testCategory="User Settings"
+  local check="$id - $desc - $testCategory"
   starttestjson "$id" "$desc"
 
   docker_root_dir=$(docker info -f '{{ .DockerRootDir }}')
@@ -34,7 +35,7 @@ check_1_1_1() {
     logcheckresult "PASS"
     return
   fi
-  warn -s "$check" "$remediation" "$remediationImpact"
+  warn -s "$check - $remediation - $remediationImpact"
   logcheckresult "WARN"
 }
 
@@ -412,7 +413,7 @@ check_1_1_12() {
 
 check_1_1_13() {
   local id="1.1.13"
-  local desc="Ensure auditing is configured for Docker files and directories - /fenced/mnt/host/etc/sysconfig/docker (Automated)"
+  local desc="Ensure auditing is configured for Docker files and directories - /etc/sysconfig/docker (Automated)"
   local remediation="Install auditd. Add -w /fenced/mnt/host/etc/sysconfig/docker -k docker to the /fenced/mnt/host/etc/audit/rules.d/audit.rules file. Then restart the audit daemon using command service auditd restart."
   local remediationImpact="Audit can generate large log files. So you need to make sure that they are rotated and archived periodically. Create a separate partition for audit logs to avoid filling up other critical partitions."
   local check="$id - $desc"
