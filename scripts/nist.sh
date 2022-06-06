@@ -3,6 +3,7 @@ source /usr/local/bin/compliance_check/scripts/docker-bench-security/functions/h
 source /usr/local/bin/compliance_check/scripts/docker-bench-security/tests/1_host_configuration.sh
 source /usr/local/bin/compliance_check/scripts/docker-bench-security/tests/2_docker_daemon_configuration.sh
 source /usr/local/bin/compliance_check/scripts/docker-bench-security/tests/3_docker_daemon_configuration_files.sh
+source /usr/local/bin/compliance_check/scripts/docker-bench-security/tests/4_container_images.sh
 source /usr/local/bin/compliance_check/scripts/docker-bench-security/tests/5_container_runtime.sh
 
 check_1_2_2
