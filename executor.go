@@ -34,7 +34,7 @@ type benchItem struct {
 	Profile     string // level 1, 2
 	Scored      bool
 	Automated   bool
-	Message     []string
+	Message     string
 	Remediation string
 	RemediationImpact string
 	TestCategory string

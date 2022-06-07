@@ -65,20 +65,15 @@ check_1_1_2() {
       fi
     done
   else
-    info -c "$check"
-    info "      * Users: $docker_users"
-    logcheckresult "INFO" "doubtfulusers" "$docker_users"
+    logbenchjson "INFO"  $id "$testCategory" "$desc * Users: $docker_users" "$remediation" "$remediationImpact"
   fi
 
   if [ -n "${doubtfulusers}" ]; then
-    warn -s "$check"
-    warn "      * Doubtful users: $doubtfulusers"
-    logcheckresult "WARN" "doubtfulusers" "$doubtfulusers"
+    logbenchjson "WARN"  $id "$testCategory" "$desc * Users: $doubtfulusers" "$remediation" "$remediationImpact"
   fi
 
   if [ -z "${doubtfulusers}" ] && [ -n "${dockertrustusers}" ]; then
-    pass -s "$check"
-    logcheckresult "PASS"
+    logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
   fi
 }
 
