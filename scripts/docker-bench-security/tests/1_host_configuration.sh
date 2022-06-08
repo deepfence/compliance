@@ -82,27 +82,24 @@ check_1_1_3() {
   local desc="Ensure auditing is configured for the Docker daemon (Automated)"
   local remediation="Install auditd. Add -w /usr/bin/dockerd -k docker to the /fenced/mnt/host/etc/audit/rules.d/audit.rules file. Then restart the audit daemon using command service auditd restart."
   local remediationImpact="Audit can generate large log files. So you need to make sure that they are rotated and archived periodically. Create a separate partition for audit logs to avoid filling up other critical partitions."
+  local testCategory="Audit"
   local check="$id - $desc"
   starttestjson "$id" "$desc"
 
   file="/usr/bin/dockerd"
   if command -v auditctl >/dev/null 2>&1; then
     if auditctl -l | grep "$file" >/dev/null 2>&1; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    logcheckresult "WARN"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
     return
   fi
   if grep -s "$file" "$auditrules" | grep "^[^#;]" 2>/dev/null 1>&2; then
-    pass -s "$check"
-    logcheckresult "PASS"
+    logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
     return
   fi
-  warn -s "$check"
-  logcheckresult "WARN"
+  logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
 }
 
 check_1_1_4() {
@@ -110,27 +107,24 @@ check_1_1_4() {
   local desc="Ensure auditing is configured for Docker files and directories -/run/containerd (Automated)"
   local remediation="Install auditd. Add -a exit,always -F path=/run/containerd -F perm=war -k docker to the /fenced/mnt/host/etc/audit/rules.d/audit.rules file. Then restart the audit daemon using command service auditd restart."
   local remediationImpact="Audit can generate large log files. So you need to make sure that they are rotated and archived periodically. Create a separate partition for audit logs to avoid filling up other critical partitions."
+  local testCategory="Audit"
   local check="$id - $desc"
   starttestjson "$id" "$desc"
 
   file="/run/containerd"
   if command -v auditctl >/dev/null 2>&1; then
     if auditctl -l | grep "$file" >/dev/null 2>&1; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    logcheckresult "WARN"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
     return
   fi
   if grep -s "$file" "$auditrules" | grep "^[^#;]" 2>/dev/null 1>&2; then
-    pass -s "$check"
-    logcheckresult "PASS"
+   logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
     return
   fi
-  warn -s "$check"
-  logcheckresult "WARN"
+  logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
 }
 
 check_1_1_5() {
@@ -139,32 +133,27 @@ check_1_1_5() {
   local remediation="Install auditd. Add -w /var/lib/docker -k docker to the /fenced/mnt/host/etc/audit/rules.d/audit.rules file. Then restart the audit daemon using command service auditd restart."
   local remediationImpact="Audit can generate large log files. So you need to make sure that they are rotated and archived periodically. Create a separate partition for audit logs to avoid filling up other critical partitions."
   local check="$id - $desc"
+  local testCategory="Audit"
   starttestjson "$id" "$desc"
 
   directory="/var/lib/docker"
   if [ -d "$directory" ]; then
     if command -v auditctl >/dev/null 2>&1; then
       if auditctl -l | grep $directory >/dev/null 2>&1; then
-        pass -s "$check"
-        logcheckresult "PASS"
+        logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
         return
       fi
-      warn -s "$check"
-      logcheckresult "WARN"
+      logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
       return
     fi
     if grep -s "$directory" "$auditrules" | grep "^[^#;]" 2>/dev/null 1>&2; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    logcheckresult "WARN"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "       * Directory not found"
-  logcheckresult "INFO" "Directory not found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc ** Directory Not Found" "$remediation" "$remediationImpact"
 }
 
 check_1_1_6() {
@@ -173,32 +162,27 @@ check_1_1_6() {
   local remediation="Install auditd. Add -w /fenced/mnt/host/etc/docker -k docker to the /fenced/mnt/host/etc/audit/rules.d/audit.rules file. Then restart the audit daemon using command service auditd restart."
   local remediationImpact="Audit can generate large log files. So you need to make sure that they are rotated and archived periodically. Create a separate partition for audit logs to avoid filling up other critical partitions."
   local check="$id - $desc"
+  local testCategory="Audit"
   starttestjson "$id" "$desc"
 
   directory="/fenced/mnt/host/etc/docker"
   if [ -d "$directory" ]; then
     if command -v auditctl >/dev/null 2>&1; then
       if auditctl -l | grep $directory >/dev/null 2>&1; then
-        pass -s "$check"
-        logcheckresult "PASS"
+        logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
         return
       fi
-      warn -s "$check"
-      logcheckresult "WARN"
+      logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
       return
     fi
     if grep -s "$directory" "$auditrules" | grep "^[^#;]" 2>/dev/null 1>&2; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    logcheckresult "WARN"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "       * Directory not found"
-  logcheckresult "INFO" "Directory not found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc ** Directory Not Found" "$remediation" "$remediationImpact"
 }
 
 check_1_1_7() {
@@ -208,32 +192,27 @@ check_1_1_7() {
   remediation="Install auditd. Add -w $(get_service_file docker.service) -k docker to the /fenced/mnt/host/etc/audit/rules.d/audit.rules file. Then restart the audit daemon using command service auditd restart."
   local remediationImpact="Audit can generate large log files. So you need to make sure that they are rotated and archived periodically. Create a separate partition for audit logs to avoid filling up other critical partitions."
   local check="$id - $desc"
+  local testCategory="Audit"
   starttestjson "$id" "$desc"
 
   file="$(get_service_file docker.service)"
   if [ -f "$file" ]; then
     if command -v auditctl >/dev/null 2>&1; then
       if auditctl -l | grep "$file" >/dev/null 2>&1; then
-        pass -s "$check"
-        logcheckresult "PASS"
+        logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
         return
       fi
-      warn -s "$check"
-      logcheckresult "WARN"
+      logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
       return
     fi
     if grep -s "$file" "$auditrules" | grep "^[^#;]" 2>/dev/null 1>&2; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    logcheckresult "WARN"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "       * File not found"
-  logcheckresult "INFO" "File not found"
+  logbenchjson "PASS"  $id "$testCategory" "$desc - File Not Found" "$remediation" "$remediationImpact"
 }
 
 check_1_1_8() {
@@ -243,32 +222,26 @@ check_1_1_8() {
   remediation="Install auditd. Add -w $(get_service_file containerd.socket) -k docker to the /fenced/mnt/host/etc/audit/rules.d/audit.rules file. Then restart the audit daemon using command service auditd restart."
   local remediationImpact="Audit can generate large log files. So you need to make sure that they are rotated and archived periodically. Create a separate partition for audit logs to avoid filling up other critical partitions."
   local check="$id - $desc"
-  starttestjson "$id" "$desc"
+  local testCategory="Audit"
 
   file="$(get_service_file containerd.socket)"
   if [ -e "$file" ]; then
     if command -v auditctl >/dev/null 2>&1; then
       if auditctl -l | grep "$file" >/dev/null 2>&1; then
-        pass -s "$check"
-        logcheckresult "PASS"
+        logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
         return
       fi
-      warn -s "$check"
-      logcheckresult "WARN"
+      logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
       return
     fi
     if grep -s "$file" "$auditrules" | grep "^[^#;]" 2>/dev/null 1>&2; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    logcheckresult "WARN"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "       * File not found"
-  logcheckresult "INFO" "File not found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc - File Not Found" "$remediation" "$remediationImpact"
 }
 check_1_1_9() {
   local id="1.1.9"
@@ -277,32 +250,27 @@ check_1_1_9() {
   remediation="Install auditd. Add -w $(get_service_file docker.socket) -k docker to the /fenced/mnt/host/etc/audit/rules.d/audit.rules file. Then restart the audit daemon using command service auditd restart."
   local remediationImpact="Audit can generate large log files. So you need to make sure that they are rotated and archived periodically. Create a separate partition for audit logs to avoid filling up other critical partitions."
   local check="$id - $desc"
+  local testCategory="Audit"
   starttestjson "$id" "$desc"
 
   file="$(get_service_file docker.socket)"
   if [ -e "$file" ]; then
     if command -v auditctl >/dev/null 2>&1; then
       if auditctl -l | grep "$file" >/dev/null 2>&1; then
-        pass -s "$check"
-        logcheckresult "PASS"
+        logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
         return
       fi
-      warn -s "$check"
-      logcheckresult "WARN"
+      logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
       return
     fi
     if grep -s "$file" "$auditrules" | grep "^[^#;]" 2>/dev/null 1>&2; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    logcheckresult "WARN"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "       * File not found"
-  logcheckresult "INFO" "File not found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc - File Not Found" "$remediation" "$remediationImpact"
 }
 
 check_1_1_10() {
@@ -311,32 +279,27 @@ check_1_1_10() {
   local remediation="Install auditd. Add -w /fenced/mnt/host/etc/default/docker -k docker to the /fenced/mnt/host/etc/audit/rules.d/audit.rules file. Then restart the audit daemon using command service auditd restart."
   local remediationImpact="Audit can generate large log files. So you need to make sure that they are rotated and archived periodically. Create a separate partition for audit logs to avoid filling up other critical partitions."
   local check="$id - $desc"
+  local testCategory="Audit"
   starttestjson "$id" "$desc"
 
   file="/fenced/mnt/host/etc/default/docker"
   if [ -f "$file" ]; then
     if command -v auditctl >/dev/null 2>&1; then
       if auditctl -l | grep $file >/dev/null 2>&1; then
-        pass -s "$check"
-        logcheckresult "PASS"
+        logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
         return
       fi
-      warn -s "$check"
-      logcheckresult "WARN"
+      logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
       return
     fi
     if grep -s "$file" "$auditrules" | grep "^[^#;]" 2>/dev/null 1>&2; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    logcheckresult "WARN"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "       * File not found"
-  logcheckresult "INFO" "File not found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc - File Not Found" "$remediation" "$remediationImpact"
 }
 
 check_1_1_11() {
@@ -345,32 +308,27 @@ check_1_1_11() {
   local remediation="Install auditd. Add -w /fenced/mnt/host/etc/docker/daemon.json -k docker to the /fenced/mnt/host/etc/audit/rules.d/audit.rules file. Then restart the audit daemon using command service auditd restart."
   local remediationImpact="Audit can generate large log files. So you need to make sure that they are rotated and archived periodically. Create a separate partition for audit logs to avoid filling up other critical partitions."
   local check="$id - $desc"
+  local testCategory="Audit"
   starttestjson "$id" "$desc"
 
   file="/fenced/mnt/host/etc/docker/daemon.json"
   if [ -f "$file" ]; then
     if command -v auditctl >/dev/null 2>&1; then
       if auditctl -l | grep $file >/dev/null 2>&1; then
-        pass -s "$check"
-        logcheckresult "PASS"
+        logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
         return
       fi
-      warn -s "$check"
-      logcheckresult "WARN"
+      logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
       return
     fi
     if grep -s "$file" "$auditrules" | grep "^[^#;]" 2>/dev/null 1>&2; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    logcheckresult "WARN"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "       * File not found"
-  logcheckresult "INFO" "File not found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc - File Not Found" "$remediation" "$remediationImpact"
 }
 
 check_1_1_12() {
@@ -379,32 +337,27 @@ check_1_1_12() {
   local remediation="Install auditd. Add -w /fenced/mnt/host/etc/containerd/config.toml -k docker to the /fenced/mnt/host/etc/audit/rules.d/audit.rules file. Then restart the audit daemon using command service auditd restart."
   local remediationImpact="Audit can generate large log files. So you need to make sure that they are rotated and archived periodically. Create a separate partition for audit logs to avoid filling up other critical partitions."
   local check="$id - $desc"
+  local testCategory="Audit"
   starttestjson "$id" "$desc"
 
   file="/fenced/mnt/host/etc/containerd/config.toml"
   if [ -f "$file" ]; then
     if command -v auditctl >/dev/null 2>&1; then
       if auditctl -l | grep $file >/dev/null 2>&1; then
-        pass -s "$check"
-        logcheckresult "PASS"
+        logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
         return
       fi
-      warn -s "$check"
-      logcheckresult "WARN"
+      logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
       return
     fi
     if grep -s "$file" "$auditrules" | grep "^[^#;]" 2>/dev/null 1>&2; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    logcheckresult "WARN"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "       * File not found"
-  logcheckresult "INFO" "File not found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc - File Not Found" "$remediation" "$remediationImpact"
 }
 
 check_1_1_13() {

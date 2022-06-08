@@ -98,7 +98,7 @@ note () {
 }
 
 logbenchjson () {
-  printf "{\"Level\":\"%s\",\"TestNum\":\"%s\",\"TestCategory\":\"%s\",\"Message\":\"%s\",\"Remediation\":\"%s\",\"RemediationImpact\":\"%s\"}" "$1" "$2" "$3" "$4" "$5" "$6" | tee -a "$logger"
+  printf "{\"Level\":\"%s\",\"TestNum\":\"%s\",\"TestCategory\":\"%s\",\"Header\":\"%s\",\"Remediation\":\"%s\",\"RemediationImpact\":\"%s\"}\n" "$1" "$2" "$3" "$4" "$5" "$6" | tee -a "$logger"
 }
 
 yell () {

@@ -108,25 +108,22 @@ check_2_5() {
   local remediation="You should ensure that no insecure registries are in use."
   local remediationImpact="None."
   local check="$id - $desc"
+  local testCategory="Docker Daemon Configuration"
   starttestjson "$id" "$desc"
 
   if get_docker_effective_command_line_args '--insecure-registry' | grep "insecure-registry" >/dev/null 2>&1; then
-    warn -s "$check"
-    logcheckresult "WARN"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
     return
   fi
   if ! [ -z "$(get_docker_configuration_file_args 'insecure-registries')" ]; then
     if get_docker_configuration_file_args 'insecure-registries' | grep '\[]' >/dev/null 2>&1; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    logcheckresult "WARN"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
     return
   fi
-  pass -s "$check"
-  logcheckresult "PASS"
+  logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
 }
 
 check_2_6() {
@@ -152,31 +149,25 @@ check_2_7() {
   local remediation="Follow the steps mentioned in the Docker documentation or other references. By default, TLS authentication is not configured."
   local remediationImpact="You would need to manage and guard certificates and keys for the Docker daemon and Docker clients."
   local check="$id - $desc"
+  local testCategory="Docker Daemon Configuration"
   starttestjson "$id" "$desc"
 
   if [ $(get_docker_configuration_file_args 'tcp://') ] || \
     [ $(get_docker_cumulative_command_line_args '-H' | grep -vE '(unix|fd)://') >/dev/null 2>&1 ]; then
     if [ $(get_docker_configuration_file_args '"tlsverify":' | grep 'true') ] || \
         [ $(get_docker_cumulative_command_line_args '--tlsverify' | grep 'tlsverify') >/dev/null 2>&1 ]; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
       return
     fi
     if [ $(get_docker_configuration_file_args '"tls":' | grep 'true') ] || \
         [ $(get_docker_cumulative_command_line_args '--tls' | grep 'tls$') >/dev/null 2>&1 ]; then
-      warn -s "$check"
-      warn "     * Docker daemon currently listening on TCP with TLS, but no verification"
-      logcheckresult "WARN" "Docker daemon currently listening on TCP with TLS, but no verification"
+      logbenchjson "WARN"  $id "$testCategory" "$desc - ** Docker daemon currently listening on TCP with TLS, but no verification" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    warn "     * Docker daemon currently listening on TCP without TLS"
-    logcheckresult "WARN" "Docker daemon currently listening on TCP without TLS"
+    logbenchjson "WARN"  $id "$testCategory" "$desc - ** Docker daemon currently listening on TCP without TLS" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "     * Docker daemon not listening on TCP"
-  logcheckresult "INFO" "Docker daemon not listening on TCP"
+  logbenchjson "INFO"  $id "$testCategory" "$desc - ** Docker daemon not listening on TCP" "$remediation" "$remediationImpact"
 }
 
 check_2_8() {

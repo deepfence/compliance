@@ -27,17 +27,17 @@ type DockerReplaceOpts struct {
 }
 
 type benchItem struct {
-	Level       string
-	TestNum     string
-	Group       string
-	Header      string
-	Profile     string // level 1, 2
-	Scored      bool
-	Automated   bool
-	Message     string
-	Remediation string
+	Level       	  string
+	TestNum     	  string
+	Group       	  string
+	Header      	  string
+	Profile     	  string // level 1, 2
+	Scored      	  bool
+	Automated   	  bool
+	Message     	  string
+	Remediation 	  string
 	RemediationImpact string
-	TestCategory string
+	TestCategory 	  string
 }
 
 func (b *Bench) RunScripts() ([]byte, error) {
@@ -127,32 +127,13 @@ func (b *Bench) replaceTemplateVars(srcPath, dstPath string, containers []string
 func (b *Bench) getBenchMsg(out []byte) []*benchItem {
 	list := make([]*benchItem, 0)
 	scanner := bufio.NewScanner(strings.NewReader(string(out)))
-	var last, item *benchItem
+	var item *benchItem
 	for scanner.Scan() {
 		// Read output line-by-line. Every check forms a item,
 		// the first line is the header and the rest form the message
 		line := scanner.Text()
-		if c, ok := b.parseBenchMsg(line); ok {
-			if c.TestNum == "" && item != nil {
-				item.Message = append(item.Message, c.Header)
-			} else {
-				if item != nil {
-					// add the last item to the result
-					if b.acceptBenchItem(last, item) {
-						list = append(list, last)
-					}
-					last = item
-				}
-				item = c
-			}
-		}
-	}
-	if item != nil {
-		// add the last item to the result
-		if b.acceptBenchItem(last, item) {
-			list = append(list, last)
-		}
-		if b.acceptBenchItem(item, nil) {
+		err := json.Unmarshal([]byte(line), &item)
+		if err == nil && b.acceptBenchItem(item, nil) {
 			list = append(list, item)
 		}
 	}
