@@ -65,15 +65,15 @@ check_1_1_2() {
       fi
     done
   else
-    logbenchjson "INFO"  $id "$testCategory" "$desc * Users: $docker_users" "$remediation" "$remediationImpact"
+    logbenchjson "INFO"  $id "$testCategory" "$desc" "* Users: $docker_users" "$remediation" "$remediationImpact"
   fi
 
   if [ -n "${doubtfulusers}" ]; then
-    logbenchjson "WARN"  $id "$testCategory" "$desc * Users: $doubtfulusers" "$remediation" "$remediationImpact"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" " * Users: $doubtfulusers" "$remediation" "$remediationImpact"
   fi
 
   if [ -z "${doubtfulusers}" ] && [ -n "${dockertrustusers}" ]; then
-    logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+    logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
   fi
 }
 
@@ -89,17 +89,17 @@ check_1_1_3() {
   file="/usr/bin/dockerd"
   if command -v auditctl >/dev/null 2>&1; then
     if auditctl -l | grep "$file" >/dev/null 2>&1; then
-      logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
     return
   fi
   if grep -s "$file" "$auditrules" | grep "^[^#;]" 2>/dev/null 1>&2; then
-    logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+    logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
     return
   fi
-  logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+  logbenchjson "WARN"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
 }
 
 check_1_1_4() {
@@ -114,17 +114,17 @@ check_1_1_4() {
   file="/run/containerd"
   if command -v auditctl >/dev/null 2>&1; then
     if auditctl -l | grep "$file" >/dev/null 2>&1; then
-      logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
     return
   fi
   if grep -s "$file" "$auditrules" | grep "^[^#;]" 2>/dev/null 1>&2; then
-   logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+   logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
     return
   fi
-  logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+  logbenchjson "WARN"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
 }
 
 check_1_1_5() {
@@ -140,20 +140,20 @@ check_1_1_5() {
   if [ -d "$directory" ]; then
     if command -v auditctl >/dev/null 2>&1; then
       if auditctl -l | grep $directory >/dev/null 2>&1; then
-        logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+        logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
         return
       fi
-      logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+      logbenchjson "WARN"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
     if grep -s "$directory" "$auditrules" | grep "^[^#;]" 2>/dev/null 1>&2; then
-      logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
     return
   fi
-  logbenchjson "INFO"  $id "$testCategory" "$desc ** Directory Not Found" "$remediation" "$remediationImpact"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "** Directory Not Found" "$remediation" "$remediationImpact"
 }
 
 check_1_1_6() {
@@ -169,20 +169,20 @@ check_1_1_6() {
   if [ -d "$directory" ]; then
     if command -v auditctl >/dev/null 2>&1; then
       if auditctl -l | grep $directory >/dev/null 2>&1; then
-        logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+        logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
         return
       fi
-      logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+      logbenchjson "WARN"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
     if grep -s "$directory" "$auditrules" | grep "^[^#;]" 2>/dev/null 1>&2; then
-      logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
     return
   fi
-  logbenchjson "INFO"  $id "$testCategory" "$desc ** Directory Not Found" "$remediation" "$remediationImpact"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "** Directory Not Found" "$remediation" "$remediationImpact"
 }
 
 check_1_1_7() {
@@ -199,20 +199,20 @@ check_1_1_7() {
   if [ -f "$file" ]; then
     if command -v auditctl >/dev/null 2>&1; then
       if auditctl -l | grep "$file" >/dev/null 2>&1; then
-        logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+        logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
         return
       fi
-      logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+      logbenchjson "WARN"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
     if grep -s "$file" "$auditrules" | grep "^[^#;]" 2>/dev/null 1>&2; then
-      logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
     return
   fi
-  logbenchjson "PASS"  $id "$testCategory" "$desc - File Not Found" "$remediation" "$remediationImpact"
+  logbenchjson "PASS"  $id "$testCategory" "$desc" "- File Not Found" "$remediation" "$remediationImpact"
 }
 
 check_1_1_8() {
@@ -228,20 +228,20 @@ check_1_1_8() {
   if [ -e "$file" ]; then
     if command -v auditctl >/dev/null 2>&1; then
       if auditctl -l | grep "$file" >/dev/null 2>&1; then
-        logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+        logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
         return
       fi
-      logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+      logbenchjson "WARN"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
     if grep -s "$file" "$auditrules" | grep "^[^#;]" 2>/dev/null 1>&2; then
-      logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
     return
   fi
-  logbenchjson "INFO"  $id "$testCategory" "$desc - File Not Found" "$remediation" "$remediationImpact"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "- File Not Found" "$remediation" "$remediationImpact"
 }
 check_1_1_9() {
   local id="1.1.9"
@@ -257,20 +257,20 @@ check_1_1_9() {
   if [ -e "$file" ]; then
     if command -v auditctl >/dev/null 2>&1; then
       if auditctl -l | grep "$file" >/dev/null 2>&1; then
-        logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+        logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
         return
       fi
-      logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+      logbenchjson "WARN"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
     if grep -s "$file" "$auditrules" | grep "^[^#;]" 2>/dev/null 1>&2; then
-      logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
     return
   fi
-  logbenchjson "INFO"  $id "$testCategory" "$desc - File Not Found" "$remediation" "$remediationImpact"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "- File Not Found" "$remediation" "$remediationImpact"
 }
 
 check_1_1_10() {
@@ -286,20 +286,20 @@ check_1_1_10() {
   if [ -f "$file" ]; then
     if command -v auditctl >/dev/null 2>&1; then
       if auditctl -l | grep $file >/dev/null 2>&1; then
-        logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+        logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
         return
       fi
-      logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+      logbenchjson "WARN"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
     if grep -s "$file" "$auditrules" | grep "^[^#;]" 2>/dev/null 1>&2; then
-      logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
     return
   fi
-  logbenchjson "INFO"  $id "$testCategory" "$desc - File Not Found" "$remediation" "$remediationImpact"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "- File Not Found" "$remediation" "$remediationImpact"
 }
 
 check_1_1_11() {
@@ -315,20 +315,20 @@ check_1_1_11() {
   if [ -f "$file" ]; then
     if command -v auditctl >/dev/null 2>&1; then
       if auditctl -l | grep $file >/dev/null 2>&1; then
-        logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+        logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
         return
       fi
-      logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+      logbenchjson "WARN"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
     if grep -s "$file" "$auditrules" | grep "^[^#;]" 2>/dev/null 1>&2; then
-      logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
     return
   fi
-  logbenchjson "INFO"  $id "$testCategory" "$desc - File Not Found" "$remediation" "$remediationImpact"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "- File Not Found" "$remediation" "$remediationImpact"
 }
 
 check_1_1_12() {
@@ -344,20 +344,20 @@ check_1_1_12() {
   if [ -f "$file" ]; then
     if command -v auditctl >/dev/null 2>&1; then
       if auditctl -l | grep $file >/dev/null 2>&1; then
-        logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+        logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
         return
       fi
-      logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+      logbenchjson "WARN"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
     if grep -s "$file" "$auditrules" | grep "^[^#;]" 2>/dev/null 1>&2; then
-      logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
     return
   fi
-  logbenchjson "INFO"  $id "$testCategory" "$desc - File Not Found" "$remediation" "$remediationImpact"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "- File Not Found" "$remediation" "$remediationImpact"
 }
 
 check_1_1_13() {

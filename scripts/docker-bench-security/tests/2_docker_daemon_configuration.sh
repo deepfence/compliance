@@ -112,18 +112,18 @@ check_2_5() {
   starttestjson "$id" "$desc"
 
   if get_docker_effective_command_line_args '--insecure-registry' | grep "insecure-registry" >/dev/null 2>&1; then
-    logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
     return
   fi
   if ! [ -z "$(get_docker_configuration_file_args 'insecure-registries')" ]; then
     if get_docker_configuration_file_args 'insecure-registries' | grep '\[]' >/dev/null 2>&1; then
-      logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
     return
   fi
-  logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+  logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
 }
 
 check_2_6() {
@@ -156,18 +156,18 @@ check_2_7() {
     [ $(get_docker_cumulative_command_line_args '-H' | grep -vE '(unix|fd)://') >/dev/null 2>&1 ]; then
     if [ $(get_docker_configuration_file_args '"tlsverify":' | grep 'true') ] || \
         [ $(get_docker_cumulative_command_line_args '--tlsverify' | grep 'tlsverify') >/dev/null 2>&1 ]; then
-      logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
     if [ $(get_docker_configuration_file_args '"tls":' | grep 'true') ] || \
         [ $(get_docker_cumulative_command_line_args '--tls' | grep 'tls$') >/dev/null 2>&1 ]; then
-      logbenchjson "WARN"  $id "$testCategory" "$desc - ** Docker daemon currently listening on TCP with TLS, but no verification" "$remediation" "$remediationImpact"
+      logbenchjson "WARN"  $id "$testCategory" "$desc" "- ** Docker daemon currently listening on TCP with TLS, but no verification" "$remediation" "$remediationImpact"
       return
     fi
-    logbenchjson "WARN"  $id "$testCategory" "$desc - ** Docker daemon currently listening on TCP without TLS" "$remediation" "$remediationImpact"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "- ** Docker daemon currently listening on TCP without TLS" "$remediation" "$remediationImpact"
     return
   fi
-  logbenchjson "INFO"  $id "$testCategory" "$desc - ** Docker daemon not listening on TCP" "$remediation" "$remediationImpact"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "- ** Docker daemon not listening on TCP" "$remediation" "$remediationImpact"
 }
 
 check_2_8() {
@@ -310,14 +310,14 @@ check_2_14() {
   starttestjson "$id" "$desc"
 
   if get_docker_effective_command_line_args '--no-new-privileges' | grep "no-new-privileges" >/dev/null 2>&1; then
-    logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+    logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
     return
   fi
   if get_docker_configuration_file_args 'no-new-privileges' | grep true >/dev/null 2>&1; then
-    logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+    logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
     return
   fi
-  logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
+  logbenchjson "WARN"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
 }
 
 check_2_15() {
