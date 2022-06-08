@@ -80,10 +80,8 @@ func (b *Bench) RunScripts() ([]byte, error) {
 		fmt.Println("Sending items to stdout:")
 		for _, item := range items {
 			//fmt.Println(item)
-			if item != nil {
-				s, _ := json.Marshal(*item)
-				fmt.Println(string(s))
-			}
+			s, _ := json.Marshal(item)
+			fmt.Println(string(s))
 		}
 		return out, nil
 	}
@@ -124,16 +122,16 @@ func (b *Bench) replaceTemplateVars(srcPath, dstPath string, containers []string
 	return nil
 }
 
-func (b *Bench) getBenchMsg(out []byte) []*benchItem {
-	list := make([]*benchItem, 0)
+func (b *Bench) getBenchMsg(out []byte) []benchItem {
+	list := make([]benchItem, 0)
 	scanner := bufio.NewScanner(strings.NewReader(string(out)))
-	var item *benchItem
 	for scanner.Scan() {
 		// Read output line-by-line. Every check forms a item,
 		// the first line is the header and the rest form the message
 		line := scanner.Text()
+		var item benchItem
 		err := json.Unmarshal([]byte(line), &item)
-		if err == nil && b.acceptBenchItem(item, nil) {
+		if err == nil && b.acceptBenchItem(&item, nil) {
 			list = append(list, item)
 		}
 	}

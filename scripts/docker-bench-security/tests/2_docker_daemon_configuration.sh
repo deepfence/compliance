@@ -306,20 +306,18 @@ check_2_14() {
   local remediation="You should run the Docker daemon using command: dockerd --no-new-privileges"
   local remediationImpact="no_new_priv prevents LSMs such as SELinux from escalating the privileges of individual containers."
   local check="$id - $desc"
+  local testCategory="Docker Daemon Configuration"
   starttestjson "$id" "$desc"
 
   if get_docker_effective_command_line_args '--no-new-privileges' | grep "no-new-privileges" >/dev/null 2>&1; then
-    pass -s "$check"
-    logcheckresult "PASS"
+    logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
     return
   fi
   if get_docker_configuration_file_args 'no-new-privileges' | grep true >/dev/null 2>&1; then
-    pass -s "$check"
-    logcheckresult "PASS"
+    logbenchjson "PASS"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
     return
   fi
-  warn -s "$check"
-  logcheckresult "WARN"
+  logbenchjson "WARN"  $id "$testCategory" "$desc" "$remediation" "$remediationImpact"
 }
 
 check_2_15() {
