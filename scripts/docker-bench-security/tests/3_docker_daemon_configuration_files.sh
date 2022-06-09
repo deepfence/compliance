@@ -15,23 +15,19 @@ check_3_1() {
   local remediation="Find out the file location: systemctl show -p FragmentPath docker.service. If the file does not exist, this recommendation is not applicable. If the file does exist, you should run the command chown root:root <path>, in order to set the ownership and group ownership for the file to root."
   local remediationImpact="None."
   local check="$id - $desc"
+  local testCategory="Docker Files"
   starttestjson "$id" "$desc"
 
   file=$(get_service_file docker.service)
   if [ -f "$file" ]; then
     if [ "$(stat -c %u%g "$file")" -eq 00 ]; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    warn "     * Wrong ownership for $file"
-    logcheckresult "WARN" "Wrong ownership for $file"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "* Wrong ownership for $file" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "     * File not found"
-  logcheckresult "INFO" "File not found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "** File Not Found" "$remediation" "$remediationImpact"
 }
 
 check_3_2() {
@@ -40,23 +36,18 @@ check_3_2() {
   local remediation="Find out the file location: systemctl show -p FragmentPath docker.service. If the file does not exist, this recommendation is not applicable. If the file exists, run the command chmod 644 <path> to set the file permissions to 644."
   local remediationImpact="None."
   local check="$id - $desc"
-  starttestjson "$id" "$desc"
+  local testCategory="Docker Files"
 
   file=$(get_service_file docker.service)
   if [ -f "$file" ]; then
     if [ "$(stat -c %a "$file")" -le 644 ]; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    warn "     * Wrong permissions for $file"
-    logcheckresult "WARN" "Wrong permissions for $file"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "* Wrong permissions for $file" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "     * File not found"
-  logcheckresult "INFO" "File not found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" " ** File Not Found" "$remediation" "$remediationImpact"
 }
 
 check_3_3() {
@@ -65,23 +56,19 @@ check_3_3() {
   local remediation="Find out the file location: systemctl show -p FragmentPath docker.socket. If the file does not exist, this recommendation is not applicable. If the file exists, run the command chown root:root <path> to set the ownership and group ownership for the file to root."
   local remediationImpact="None."
   local check="$id - $desc"
+  local testCategory="Docker Files"
   starttestjson "$id" "$desc"
 
   file=$(get_service_file docker.socket)
   if [ -f "$file" ]; then
     if [ "$(stat -c %u%g "$file")" -eq 00 ]; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    warn "     * Wrong ownership for $file"
-    logcheckresult "WARN" "Wrong ownership for $file"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "* Wrong ownership for $file" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "     * File not found"
-  logcheckresult "INFO" "File not found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "* File Not Found" "$remediation" "$remediationImpact"
 }
 
 check_3_4() {
@@ -90,23 +77,19 @@ check_3_4() {
   local remediation="Find out the file location: systemctl show -p FragmentPath docker.socket. If the file does not exist, this recommendation is not applicable. If the file does exist, you should run the command chmod 644 <path> to set the file permissions to 644."
   local remediationImpact="None."
   local check="$id - $desc"
+  local testCategory="Docker Files"
   starttestjson "$id" "$desc"
 
   file=$(get_service_file docker.socket)
   if [ -f "$file" ]; then
     if [ "$(stat -c %a "$file")" -le 644 ]; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    warn "     * Wrong permissions for $file"
-    logcheckresult "WARN" "Wrong permissions for $file"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "* Wrong permissions for $file" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "     * File not found"
-  logcheckresult "INFO" "File not found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "* File Not Found" "$remediation" "$remediationImpact"
 }
 
 check_3_5() {
@@ -115,23 +98,19 @@ check_3_5() {
   local remediation="You should run the following command: chown root:root /fenced/mnt/host/etc/docker. This sets the ownership and group ownership for the directory to root."
   local remediationImpact="None."
   local check="$id - $desc"
+  local testCategory="Docker Files"
   starttestjson "$id" "$desc"
 
   directory="/fenced/mnt/host/etc/docker"
   if [ -d "$directory" ]; then
     if [ "$(stat -c %u%g $directory)" -eq 00 ]; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    warn "     * Wrong ownership for $directory"
-    logcheckresult "WARN" "Wrong ownership for $directory"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "* Wrong ownership for $directory" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "     * Directory not found"
-  logcheckresult "INFO" "Directory not found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "* File Not Found" "$remediation" "$remediationImpact"
 }
 
 check_3_6() {
@@ -140,23 +119,19 @@ check_3_6() {
   local remediation="You should run the following command: chmod 755 /fenced/mnt/host/etc/docker. This sets the permissions for the directory to 755."
   local remediationImpact="None."
   local check="$id - $desc"
+  local testCategory="Docker Files"
   starttestjson "$id" "$desc"
 
   directory="/fenced/mnt/host/etc/docker"
   if [ -d "$directory" ]; then
     if [ "$(stat -c %a $directory)" -le 755 ]; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    warn "     * Wrong permissions for $directory"
-    logcheckresult "WARN" "Wrong permissions for $directory"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "* Wrong permissions for $directory" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "     * Directory not found"
-  logcheckresult "INFO" "Directory not found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "* File Not Found" "$remediation" "$remediationImpact"
 }
 
 check_3_7() {
@@ -165,6 +140,7 @@ check_3_7() {
   local remediation="You should run the following command: chown root:root /fenced/mnt/host/etc/docker/certs.d/<registry-name>/*. This would set the individual ownership and group ownership for the registry certificate files to root."
   local remediationImpact="None."
   local check="$id - $desc"
+  local testCategory="Docker Files"
   starttestjson "$id" "$desc"
 
   directory="/fenced/mnt/host/etc/docker/certs.d/"
@@ -177,18 +153,13 @@ check_3_7() {
       fi
     done
     if [ $fail -eq 1 ]; then
-      warn -s "$check"
-      warn "     * Wrong ownership for $directory"
-      logcheckresult "WARN" "Wrong ownership for $directory"
+      logbenchjson "WARN"  $id "$testCategory" "$desc" "* Wrong ownership for $directory" "$remediation" "$remediationImpact"
       return
     fi
-    pass -s "$check"
-    logcheckresult "PASS"
+    logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "     * Directory not found"
-  logcheckresult "INFO" "Directory not found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "* File Not Found" "$remediation" "$remediationImpact"
 }
 
 check_3_8() {
@@ -197,6 +168,7 @@ check_3_8() {
   local remediation="You should run the following command: chmod 444 /fenced/mnt/host/etc/docker/certs.d/<registry-name>/*. This would set the permissions for the registry certificate files to 444."
   local remediationImpact="None."
   local check="$id - $desc"
+  local testCategory="Docker Files"
   starttestjson "$id" "$desc"
 
   directory="/fenced/mnt/host/etc/docker/certs.d/"
@@ -209,18 +181,13 @@ check_3_8() {
       fi
     done
     if [ $fail -eq 1 ]; then
-      warn -s "$check"
-      warn "     * Wrong permissions for $directory"
-      logcheckresult "WARN" "Wrong permissions for $directory"
+      logbenchjson "WARN"  $id "$testCategory" "$desc" "* Wrong permissions for $directory" "$remediation" "$remediationImpact"
       return
     fi
-    pass -s "$check"
-    logcheckresult "PASS"
+    logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "     * Directory not found"
-  logcheckresult "INFO" "Directory not found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "* Directory Not Found" "$remediation" "$remediationImpact"
 }
 
 check_3_9() {
@@ -229,6 +196,7 @@ check_3_9() {
   local remediation="You should run the following command: chown root:root <path to TLS CA certificate file>. This sets the individual ownership and group ownership for the TLS CA certificate file to root."
   local remediationImpact="None."
   local check="$id - $desc"
+  local testCategory="Docker Files"
   starttestjson "$id" "$desc"
 
   tlscacert=$(get_docker_effective_command_line_args '--tlscacert' | sed -n 's/.*tlscacert=\([^s]\)/\1/p' | sed 's/--/ --/g' | cut -d " " -f 1)
@@ -237,18 +205,13 @@ check_3_9() {
   fi
   if [ -f "$tlscacert" ]; then
     if [ "$(stat -c %u%g "$tlscacert")" -eq 00 ]; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    warn "     * Wrong ownership for $tlscacert"
-    logcheckresult "WARN" "Wrong ownership for $tlscacert"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "* Wrong ownership for $tlscacert" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "     * No TLS CA certificate found"
-  logcheckresult "INFO" "No TLS CA certificate found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "*  No TLS CA certificate found" "$remediation" "$remediationImpact"
 }
 
 check_3_10() {
@@ -257,6 +220,7 @@ check_3_10() {
   local remediation="You should run the following command: chmod 444 <path to TLS CA certificate file>. This sets the file permissions on the TLS CA file to 444."
   local remediationImpact="None."
   local check="$id - $desc"
+  local testCategory="Docker Files"
   starttestjson "$id" "$desc"
 
   tlscacert=$(get_docker_effective_command_line_args '--tlscacert' | sed -n 's/.*tlscacert=\([^s]\)/\1/p' | sed 's/--/ --/g' | cut -d " " -f 1)
@@ -265,18 +229,13 @@ check_3_10() {
   fi
   if [ -f "$tlscacert" ]; then
     if [ "$(stat -c %a "$tlscacert")" -le 444 ]; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    warn "      * Wrong permissions for $tlscacert"
-    logcheckresult "WARN" "Wrong permissions for $tlscacert"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "* Wrong permissions for $tlscacert" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "      * No TLS CA certificate found"
-  logcheckresult "INFO" "No TLS CA certificate found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "* No TLS CA certificate found" "$remediation" "$remediationImpact"
 }
 
 check_3_11() {
@@ -285,6 +244,7 @@ check_3_11() {
   local remediation="You should run the following command: chown root:root <path to Docker server certificate file>. This sets the individual ownership and the group ownership for the Docker server certificate file to root."
   local remediationImpact="None."
   local check="$id - $desc"
+  local testCategory="Docker Files"
   starttestjson "$id" "$desc"
 
   tlscert=$(get_docker_effective_command_line_args '--tlscert' | sed -n 's/.*tlscert=\([^s]\)/\1/p' | sed 's/--/ --/g' | cut -d " " -f 1)
@@ -293,18 +253,13 @@ check_3_11() {
   fi
   if [ -f "$tlscert" ]; then
     if [ "$(stat -c %u%g "$tlscert")" -eq 00 ]; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    warn "      * Wrong ownership for $tlscert"
-    logcheckresult "WARN" "Wrong ownership for $tlscert"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "* Wrong ownership for $tlscert" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "      * No TLS Server certificate found"
-  logcheckresult "INFO" "No TLS Server certificate found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "* No TLS Server certificate found" "$remediation" "$remediationImpact"
 }
 
 check_3_12() {
@@ -313,6 +268,7 @@ check_3_12() {
   local remediation="You should run the following command: chmod 444 <path to Docker server certificate file>. This sets the file permissions of the Docker server certificate file to 444."
   local remediationImpact="None."
   local check="$id - $desc"
+  local testCategory="Docker Files"
   starttestjson "$id" "$desc"
 
   tlscert=$(get_docker_effective_command_line_args '--tlscert' | sed -n 's/.*tlscert=\([^s]\)/\1/p' | sed 's/--/ --/g' | cut -d " " -f 1)
@@ -321,18 +277,13 @@ check_3_12() {
   fi
   if [ -f "$tlscert" ]; then
     if [ "$(stat -c %a "$tlscert")" -le 444 ]; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    warn "      * Wrong permissions for $tlscert"
-    logcheckresult "WARN" "Wrong permissions for $tlscert"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "* Wrong permissions for $tlscert" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "      * No TLS Server certificate found"
-  logcheckresult "INFO" "No TLS Server certificate found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "* No TLS Server certificate found" "$remediation" "$remediationImpact"
 }
 
 check_3_13() {
@@ -341,6 +292,7 @@ check_3_13() {
   local remediation="You should run the following command: chown root:root <path to Docker server certificate key file>. This sets the individual ownership and group ownership for the Docker server certificate key file to root."
   local remediationImpact="None."
   local check="$id - $desc"
+  local testCategory="Docker Files"
   starttestjson "$id" "$desc"
 
   tlskey=$(get_docker_effective_command_line_args '--tlskey' | sed -n 's/.*tlskey=\([^s]\)/\1/p' | sed 's/--/ --/g' | cut -d " " -f 1)
@@ -349,18 +301,13 @@ check_3_13() {
   fi
   if [ -f "$tlskey" ]; then
     if [ "$(stat -c %u%g "$tlskey")" -eq 00 ]; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    warn "      * Wrong ownership for $tlskey"
-    logcheckresult "WARN" "Wrong ownership for $tlskey"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "* Wrong ownership for $tlskey" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "      * No TLS Key found"
-  logcheckresult "INFO" "No TLS Key found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "* No TLS Key Found" "$remediation" "$remediationImpact"
 }
 
 check_3_14() {
@@ -369,6 +316,7 @@ check_3_14() {
   local remediation="You should run the following command: chmod 400 <path to Docker server certificate key file>. This sets the Docker server certificate key file permissions to 400."
   local remediationImpact="None."
   local check="$id - $desc"
+  local testCategory="Docker Files"
   starttestjson "$id" "$desc"
 
   tlskey=$(get_docker_effective_command_line_args '--tlskey' | sed -n 's/.*tlskey=\([^s]\)/\1/p' | sed 's/--/ --/g' | cut -d " " -f 1)
@@ -377,18 +325,13 @@ check_3_14() {
   fi
   if [ -f "$tlskey" ]; then
     if [ "$(stat -c %a "$tlskey")" -eq 400 ]; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    warn "      * Wrong permissions for $tlskey"
-    logcheckresult "WARN" "Wrong permissions for $tlskey"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "* Wrong permissions for $tlskey" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "      * No TLS Key found"
-  logcheckresult "INFO" "No TLS Key found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "No TLS key found" "$remediation" "$remediationImpact"
 }
 
 check_3_15() {
@@ -397,23 +340,19 @@ check_3_15() {
   local remediation="You should run the following command: chown root:docker /var/run/docker.sock. This sets the ownership to root and group ownership to docker for the default Docker socket file."
   local remediationImpact="None."
   local check="$id - $desc"
+  local testCategory="Docker Files"
   starttestjson "$id" "$desc"
 
   file="/var/run/docker.sock"
   if [ -S "$file" ]; then
     if [ "$(stat -c %U:%G $file)" = 'root:docker' ]; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    warn "      * Wrong ownership for $file"
-    logcheckresult "WARN" "Wrong ownership for $file"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "* Wrong ownership for $file" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "      * File not found"
-  logcheckresult "INFO" "File not found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "* File Not Found" "$remediation" "$remediationImpact"
 }
 
 check_3_16() {
@@ -422,23 +361,19 @@ check_3_16() {
   local remediation="You should run the following command: chmod 660 /var/run/docker.sock. This sets the file permissions of the Docker socket file to 660."
   local remediationImpact="None."
   local check="$id - $desc"
+  local testCategory="Docker Files"
   starttestjson "$id" "$desc"
 
   file="/var/run/docker.sock"
   if [ -S "$file" ]; then
     if [ "$(stat -c %a $file)" -le 660 ]; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    warn "      * Wrong permissions for $file"
-    logcheckresult "WARN" "Wrong permissions for $file"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "* Wrong permissions for $file" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "      * File not found"
-  logcheckresult "INFO" "File not found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "* File Not Found" "$remediation" "$remediationImpact"
 }
 
 check_3_17() {
@@ -447,23 +382,19 @@ check_3_17() {
   local remediation="You should run the following command: chown root:root /fenced/mnt/host/etc/docker/daemon.json. This sets the ownership and group ownership for the file to root."
   local remediationImpact="None."
   local check="$id - $desc"
+  local testCategory="Docker Files"
   starttestjson "$id" "$desc"
 
   file="/fenced/mnt/host/etc/docker/daemon.json"
   if [ -f "$file" ]; then
     if [ "$(stat -c %U:%G $file)" = 'root:root' ]; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    warn "      * Wrong ownership for $file"
-    logcheckresult "WARN" "Wrong ownership for $file"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "* Wrong ownership for $file" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "      * File not found"
-  logcheckresult "INFO" "File not found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "* File Not Found" "$remediation" "$remediationImpact"
 }
 
 check_3_18() {
@@ -472,23 +403,18 @@ check_3_18() {
   local remediation="You should run the following command: chmod 644 /fenced/mnt/host/etc/docker/daemon.json. This sets the file permissions for this file to 644."
   local remediationImpact="None."
   local check="$id - $desc"
-  starttestjson "$id" "$desc"
+  local testCategory="Docker Files"
 
   file="/fenced/mnt/host/etc/docker/daemon.json"
   if [ -f "$file" ]; then
     if [ "$(stat -c %a $file)" -le 644 ]; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    warn "      * Wrong permissions for $file"
-    logcheckresult "WARN" "Wrong permissions for $file"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "* Wrong permissions for $file" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "      * File not found"
-  logcheckresult "INFO" "File not found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "*File Not Found" "$remediation" "$remediationImpact"
 }
 
 check_3_19() {
@@ -497,23 +423,19 @@ check_3_19() {
   local remediation="You should run the following command: chown root:root /fenced/mnt/host/etc/default/docker. This sets the ownership and group ownership of the file to root."
   local remediationImpact="None."
   local check="$id - $desc"
+  local testCategory="Docker Files"
   starttestjson "$id" "$desc"
 
   file="/fenced/mnt/host/etc/default/docker"
   if [ -f "$file" ]; then
     if [ "$(stat -c %U:%G $file)" = 'root:root' ]; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    warn "      * Wrong ownership for $file"
-    logcheckresult "WARN" "Wrong ownership for $file"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "* Wrong ownership for $file" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "      * File not found"
-  logcheckresult "INFO" "File not found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "* File Not Found" "$remediation" "$remediationImpact"
 }
 
 check_3_20() {
@@ -522,23 +444,19 @@ check_3_20() {
   local remediation="You should run the following command: chmod 644 /fenced/mnt/host/etc/sysconfig/docker. This sets the file permissions for this file to 644."
   local remediationImpact="None."
   local check="$id - $desc"
+  local testCategory="Docker Files"
   starttestjson "$id" "$desc"
 
   file="/fenced/mnt/host/etc/sysconfig/docker"
   if [ -f "$file" ]; then
     if [ "$(stat -c %a $file)" -le 644 ]; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    warn "      * Wrong permissions for $file"
-    logcheckresult "WARN" "Wrong permissions for $file"
+   logbenchjson "WARN"  $id "$testCategory" "$desc" "* Wrong permissions for $file" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "      * File not found"
-  logcheckresult "INFO" "File not found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "* File Not Found" "$remediation" "$remediationImpact"
 }
 
 check_3_21() {
@@ -547,23 +465,19 @@ check_3_21() {
   local remediation="You should run the following command: chown root:root /fenced/mnt/host/etc/sysconfig/docker. This sets the ownership and group ownership for the file to root."
   local remediationImpact="None."
   local check="$id - $desc"
+  local testCategory="Docker Files"
   starttestjson "$id" "$desc"
 
   file="/fenced/mnt/host/etc/sysconfig/docker"
   if [ -f "$file" ]; then
     if [ "$(stat -c %U:%G $file)" = 'root:root' ]; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    warn "      * Wrong ownership for $file"
-    logcheckresult "WARN" "Wrong ownership for $file"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "* Wrong ownership for $file" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "      * File not found"
-  logcheckresult "INFO" "File not found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "* File Not Found" "$remediation" "$remediationImpact"
 }
 
 check_3_22() {
@@ -572,23 +486,19 @@ check_3_22() {
   local remediation="You should run the following command: chmod 644 /fenced/mnt/host/etc/default/docker. This sets the file permissions for this file to 644."
   local remediationImpact="None."
   local check="$id - $desc"
+  local testCategory="Docker Files"
   starttestjson "$id" "$desc"
 
   file="/fenced/mnt/host/etc/default/docker"
   if [ -f "$file" ]; then
     if [ "$(stat -c %a $file)" -le 644 ]; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    warn "      * Wrong permissions for $file"
-    logcheckresult "WARN" "Wrong permissions for $file"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "* Wrong permissions for $file" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "      * File not found"
-  logcheckresult "INFO" "File not found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "* File Not Found" "$remediation" "$remediationImpact"
 }
 
 check_3_23() {
@@ -597,23 +507,19 @@ check_3_23() {
   local remediation="You should run the following command: chown root:root /run/containerd/containerd.sock. This sets the ownership and group ownership for the file to root."
   local remediationImpact="None."
   local check="$id - $desc"
+  local testCategory="Docker Files"
   starttestjson "$id" "$desc"
 
   file="/run/containerd/containerd.sock"
   if [ -S "$file" ]; then
     if [ "$(stat -c %U:%G $file)" = 'root:root' ]; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    warn "      * Wrong ownership for $file"
-    logcheckresult "WARN" "Wrong ownership for $file"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "* Wrong ownership for $file" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "      * File not found"
-  logcheckresult "INFO" "File not found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "* File Not Found" "$remediation" "$remediationImpact"
 }
 
 check_3_24() {
@@ -622,23 +528,19 @@ check_3_24() {
   local remediation="You should run the following command: chmod 660 /run/containerd/containerd.sock. This sets the file permissions for this file to 660."
   local remediationImpact="None."
   local check="$id - $desc"
+  local testCategory="Docker Files"
   starttestjson "$id" "$desc"
 
   file="/run/containerd/containerd.sock"
   if [ -S "$file" ]; then
     if [ "$(stat -c %a $file)" -le 660 ]; then
-      pass -s "$check"
-      logcheckresult "PASS"
+      logbenchjson "PASS"  $id "$testCategory" "$desc" "" "$remediation" "$remediationImpact"
       return
     fi
-    warn -s "$check"
-    warn "      * Wrong permissions for $file"
-    logcheckresult "WARN" "Wrong permissions for $file"
+    logbenchjson "WARN"  $id "$testCategory" "$desc" "* Wrong permissions for $file" "$remediation" "$remediationImpact"
     return
   fi
-  info -c "$check"
-  info "      * File not found"
-  logcheckresult "INFO" "File not found"
+  logbenchjson "INFO"  $id "$testCategory" "$desc" "* File Not Found" "$remediation" "$remediationImpact"
 }
 
 check_3_end() {

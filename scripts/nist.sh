@@ -46,12 +46,12 @@ check_3_22
 check_4_8
 
 
-check_5_4
-check_5_5
-check_5_6
-check_5_7
-check_5_17
-check_5_25
-check_5_31
-check_5_12
-check_5_30
+#check_5_4
+#check_5_5
+#check_5_6
+#check_5_7
+#check_5_17
+#check_5_25
+#check_5_31
+#check_5_12
+#check_5_30
