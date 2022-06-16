@@ -1,6 +1,6 @@
 source /usr/local/bin/compliance_check/scripts/common.sh
 source /usr/local/bin/compliance_check/scripts/docker-bench-security/functions/helper_lib.sh
-if [ -z "$NODE_TYPE" ]
+if [ -z "${NODE_TYPE}" ]
 then
       NODE_TYPE="master"
 fi
