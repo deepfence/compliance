@@ -51,6 +51,7 @@ func (b *Bench) RunScripts() ([]byte, error) {
 			value := flag.String(variable, "", "Template Variable for script")
 			flag.Parse()
 			if *value != "" {
+				fmt.Println("Applying env variable:" + variable + "with value: "+ *value)
 				cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", variable, *value))
 			}
 		}
