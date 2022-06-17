@@ -76,11 +76,15 @@ func (b *Bench) RunScripts() ([]byte, error) {
 			return nil, err
 		}
 		items := b.getBenchMsg(out)
-		fmt.Println("Sending items to stdout:")
+		// fmt.Println("Sending items to stdout:")
 		for _, item := range items {
 			//fmt.Println(item)
-			s, _ := json.Marshal(item)
-			fmt.Println(string(s))
+			s, err := json.Marshal(item)
+			if err == nil {
+				fmt.Println(string(s))
+			} else {
+				fmt.Println(err.Error())
+			}
 		}
 		return out, nil
 	}
