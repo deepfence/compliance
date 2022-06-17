@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
-	"flag"
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
@@ -48,11 +47,10 @@ func (b *Bench) RunScripts() ([]byte, error) {
 		cmd := exec.Command("bash", destPath)
 		cmd.Env = os.Environ()
 		for _, variable := range b.script.Vars {
-			value := flag.String(variable, "", "Template Variable for script")
-			flag.Parse()
-			if *value != "" {
-				fmt.Println("Applying env variable:" + variable + "with value: "+ *value)
-				cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", variable, *value))
+			value := os.Getenv(variable)
+			if value != "" {
+				fmt.Println("Applying env variable:" + variable + "with value: " + value)
+				cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", variable, value))
 			}
 		}
 		cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
