@@ -1,57 +1,5 @@
 {
-  "dockerCheckPrerequisites": {
-    "files": [
-      "scripts/host.sh"
-    ],
-    "name": "Docker Bench Tests",
-    "desc": "Docker CIS benchmark tests"
-  },
-  "kubeBench1.6.0": {
-    "files": [
-      "kube_master_1_6_0.tmpl",
-      "kube_worker_1_6_0.tmpl"
-    ],
-    "name": "Kubernetes 1.6.0 Bench Test",
-    "desc": "Bench Test for Kube 1.6.0",
-    "conditions": {
-      "version": "1.6.0"
-    },
-    "remediation": ""
-  },
-  "kubeBench1.5.1": {
-    "files": [
-      "kube_master_1_5_1.tmpl"
-    ],
-    "name": "Kubernetes 1.5.1 Bench Test",
-    "desc": "Bench Test for Kube 1.5.1",
-    "conditions": {
-      "version": "1.5.1",
-      "isKubeMaster": true
-    }
-  },
-  "hipaaKubeBench1.6.0": {
-    "files": [
-      "kube_master_1_6_0.tmpl",
-      "kube_worker_1_6_0.tmpl"
-    ],
-    "name": "Kubernetes 1.6.0 Bench Test",
-    "desc": "Bench Test for Kube 1.6.0",
-    "conditions": {
-      "version": "1.6.0"
-    },
-    "remediation": ""
-  },
-  "hipaaKubeBench1.5.1": {
-    "files": [
-      "kube_master_1_5_1.tmpl"
-    ],
-    "name": "Kubernetes 1.5.1 Bench Test",
-    "desc": "Bench Test for Kube 1.5.1",
-    "conditions": {
-      "version": "1.5.1",
-      "isKubeMaster": true
-    }
-  },
+
   "hipaa": {
     "files": [
       "/usr/local/bin/compliance_check/scripts/hipaa.sh"
@@ -90,6 +38,30 @@
     ],
     "name": "HIPAA Compliance Checks",
     "desc": "HIPAA Compliance Checks",
+    "variables": ["pathPrefix", "NODE_TYPE"]
+  },
+  "pcikube": {
+    "files": [
+      "/usr/local/bin/compliance_check/scripts/pcikube.sh"
+    ],
+    "name": "PCI Compliance Checks",
+    "desc": "PCI Compliance Checks",
+    "variables": ["pathPrefix", "NODE_TYPE"]
+  },
+  "gdprkube": {
+    "files": [
+      "/usr/local/bin/compliance_check/scripts/gdprkube.sh"
+    ],
+    "name": "GDPR Compliance Checks",
+    "desc": "GDPR Compliance Checks",
+    "variables": ["pathPrefix", "NODE_TYPE"]
+  },
+  "nistkube": {
+    "files": [
+      "/usr/local/bin/compliance_check/scripts/nistkube.sh"
+    ],
+    "name": "NIST Compliance Checks",
+    "desc": "NIST Compliance Checks",
     "variables": ["pathPrefix", "NODE_TYPE"]
   }
 }
