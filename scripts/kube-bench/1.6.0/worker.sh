@@ -194,7 +194,7 @@ df_k8_4_1_9() {
       logbenchjson "PASS"  $id "$testCategory" "$desc" "* kubelet configuration file: $file" "$remediation" "$remediationImpact"
     else
       logbenchjson "WARN"  $id "$testCategory" "$desc" "* Wrong ownership for $file" "$remediation" "$remediationImpact"
-    permissions
+    fi
   else
     logbenchjson "INFO"  $id "$testCategory" "$desc" "* kubelet configuration file not set $file" "$remediation" "$remediationImpact"
   fi
@@ -203,16 +203,16 @@ df_k8_4_1_9() {
 df_k8_4_1_10() {
   local id="df_k8_4_1_10"
   local desc="Ensure that the kubelet configuration file ownership is set to root:root"
-  local remediation="Run the following command (using the config file location identied in the Audit step) chmod 644 /var/lib/kubelet/config.yaml"
+  local remediation="Run the following command (using the config file location identied in the Audit step) chown root:root /etc/kubernetes/kubelet.conf"
   local remediationImpact="None."
   local testCategory="Worker File Mode"
   if check_argument "$CIS_KUBELET_CMD" '--config' >/dev/null 2>&1; then
-    file="${pathPrefix}$(get_argument_value "$CIS_KUBELET_CMD" '--config')"
+    file=$(get_argument_value "$CIS_KUBELET_CMD" '--config')
     if [ "$(stat -c %u%g $file)" -eq 00 ]; then
       logbenchjson "PASS"  $id "$testCategory" "$desc" "* kubelet configuration file: $file" "$remediation" "$remediationImpact"
     else
       logbenchjson "WARN"  $id "$testCategory" "$desc" "* Wrong ownership for $file" "$remediation" "$remediationImpact"
-    permissions
+    fi
   else
     logbenchjson "INFO"  $id "$testCategory" "$desc" "* kubelet configuration file not set $file" "$remediation" "$remediationImpact"
   fi
