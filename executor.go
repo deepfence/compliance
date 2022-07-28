@@ -1,11 +1,10 @@
-package compliance
+package main
 
 import (
 	"bufio"
 	"bytes"
+	"encoding/json"
 	"fmt"
-	"github.com/deepfence/compliance/global"
-	"github.com/deepfence/compliance/share"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"os"
@@ -27,85 +26,45 @@ type DockerReplaceOpts struct {
 }
 
 type benchItem struct {
-	level       string
-	testNum     string
-	group       string
-	header      string
-	profile     string // level 1, 2
-	scored      bool
-	automated   bool
-	message     []string
-	remediation string
-}
-
-func (b *Bench) runScript() {
-	/*var errb, outb bytes.Buffer
-	args := []string{
-		system.NSActRun, "-f", script,
-		"-m", global.SYS.GetMountNamespacePath(1),
-		"-n", global.SYS.GetNetNamespacePath(1),
-	}
-	log.WithFields(log.Fields{"type": bench}).Debug("Running Kubernetes CIS bench")
-	cmd := exec.Command(system.ExecNSTool, args...)
-	cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
-	cmd.Stdout = &outb
-	cmd.Stderr = &errb
-	b.childCmd = cmd
-	err := cmd.Start()
-	if err != nil {
-		log.WithFields(log.Fields{"error": err, "msg": errb.String()}).Error("Start")
-		return nil, err
-	}
-	pgid := cmd.Process.Pid
-	global.SYS.AddToolProcess(pgid, 1, "kube-bench", script)
-	err = cmd.Wait()
-	global.SYS.RemoveToolProcess(pgid, false)
-	out := outb.Bytes()
-
-	b.childCmd = nil
-	if err != nil {
-		if ee, ok := err.(*exec.ExitError); ok {
-			status := global.SYS.GetExitStatus(ee)
-			if status == 2 {
-				// Not a master or worker node, ignore the error
-				log.WithFields(log.Fields{"msg": errb.String()}).Debug("Done")
-				return nil, fmt.Errorf("Node type not recognized")
-			}
-		}
-
-		log.WithFields(log.Fields{"error": err, "msg": errb.String()}).Error("")
-		return nil, err
-	}
-
-	log.WithFields(log.Fields{"type": bench}).Debug("Finish Kubernetes CIS bench")
-	return out, nil*/
+	Level       	  string
+	TestNum     	  string
+	Group       	  string
+	Header      	  string
+	Profile     	  string // level 1, 2
+	Scored      	  bool
+	Automated   	  bool
+	Message     	  string
+	Remediation 	  string
+	RemediationImpact string
+	TestCategory 	  string
 }
 
 func (b *Bench) RunScripts() ([]byte, error) {
-	for _, tmplFile := range b.script.Files {
-		destPath := strings.Replace(tmplFile, ".tmpl", ".sh", -1)
-		err := b.replaceTemplateVars(tmplFile, destPath, nil)
-		if err != nil {
-			return nil, err
-		}
-		args := []string{"run", "-f", destPath,
-			"-m", global.SYS.GetMountNamespacePath(1), "-n", global.SYS.GetNetNamespacePath(1)}
+	for _, destPath := range b.script.Files {
+
 		var errb, outb bytes.Buffer
-		cmd := exec.Command("/usr/local/bin/nstools", args...)
+		//fmt.Println(args)
+		cmd := exec.Command("bash", destPath)
+		cmd.Env = os.Environ()
+		for _, variable := range b.script.Vars {
+			value := os.Getenv(variable)
+			if value != "" {
+				fmt.Println("Applying env variable:" + variable + "with value: " + value)
+				cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", variable, value))
+			}
+		}
 		cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
 		cmd.Stdout = &outb
 		cmd.Stderr = &errb
 		b.childCmd = cmd
 
-		err = cmd.Start()
+		err := cmd.Start()
 		if err != nil {
 			log.WithFields(log.Fields{"error": err, "msg": errb.String()}).Error("Start")
 			return nil, err
 		}
-		pgid := cmd.Process.Pid
 		// global.SYS.AddToolProcess(pgid, 1, "host-bench", destPath)
 		err = cmd.Wait()
-		global.SYS.RemoveToolProcess(pgid, false)
 		out := outb.Bytes()
 
 		b.childCmd = nil
@@ -117,9 +76,15 @@ func (b *Bench) RunScripts() ([]byte, error) {
 			return nil, err
 		}
 		items := b.getBenchMsg(out)
-		fmt.Println("Sending items to stdout:")
+		// fmt.Println("Sending items to stdout:")
 		for _, item := range items {
-			fmt.Println(item)
+			//fmt.Println(item)
+			s, err := json.Marshal(item)
+			if err == nil {
+				fmt.Println(string(s))
+			} else {
+				fmt.Println(err.Error())
+			}
 		}
 		return out, nil
 	}
@@ -160,35 +125,16 @@ func (b *Bench) replaceTemplateVars(srcPath, dstPath string, containers []string
 	return nil
 }
 
-func (b *Bench) getBenchMsg(out []byte) []*benchItem {
-	list := make([]*benchItem, 0)
+func (b *Bench) getBenchMsg(out []byte) []benchItem {
+	list := make([]benchItem, 0)
 	scanner := bufio.NewScanner(strings.NewReader(string(out)))
-	var last, item *benchItem
 	for scanner.Scan() {
 		// Read output line-by-line. Every check forms a item,
 		// the first line is the header and the rest form the message
 		line := scanner.Text()
-		if c, ok := b.parseBenchMsg(line); ok {
-			if c.testNum == "" && item != nil {
-				item.message = append(item.message, c.header)
-			} else {
-				if item != nil {
-					// add the last item to the result
-					if b.acceptBenchItem(last, item) {
-						list = append(list, last)
-					}
-					last = item
-				}
-				item = c
-			}
-		}
-	}
-	if item != nil {
-		// add the last item to the result
-		if b.acceptBenchItem(last, item) {
-			list = append(list, last)
-		}
-		if b.acceptBenchItem(item, nil) {
+		var item benchItem
+		err := json.Unmarshal([]byte(line), &item)
+		if err == nil && b.acceptBenchItem(&item, nil) {
 			list = append(list, item)
 		}
 	}
@@ -197,16 +143,16 @@ func (b *Bench) getBenchMsg(out []byte) []*benchItem {
 
 // check if last item should be accepted or ignored
 func (b *Bench) acceptBenchItem(last, item *benchItem) bool {
-	if last == nil {
+	/*if last == nil {
 		return false
 	}
 	// 1.2 should be ignored if the next line has 1.2. prefix
-	if item != nil && strings.HasPrefix(item.testNum, fmt.Sprintf("%s.", last.testNum)) {
+	if item != nil && strings.HasPrefix(item.TestNum, fmt.Sprintf("%s.", last.TestNum)) {
 		return false
 	}
 	// Ignore NOTE and INFO entries
-	if last.level == share.BenchLevelNote || last.level == share.BenchLevelInfo {
+	if last.Level == share.BenchLevelNote || last.Level == share.BenchLevelInfo {
 		return false
-	}
+	}*/
 	return true
 }

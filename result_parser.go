@@ -1,4 +1,4 @@
-package compliance
+package main
 
 import (
 	"github.com/deepfence/compliance/share"
@@ -62,7 +62,7 @@ func (b *Bench) parseBenchMsg(line string) (*benchItem, bool) {
 	msg = strings.TrimSpace(msg)
 
 	return &benchItem{
-		level: level, testNum: id, header: msg,
-		scored: scored, automated: automated, profile: profile,
+		Level: level, TestNum: id, Header: msg,
+		Scored: scored, Automated: automated, Profile: profile,
 	}, true
 }
