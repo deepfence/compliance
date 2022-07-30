@@ -8,9 +8,9 @@ import (
 
 type Script struct {
 	Files []string `json:"files"`
-	Name string `json:"name"`
-	Desc string `json:"desc"`
-	Vars []string `json:"variables"`
+	Name  string   `json:"name"`
+	Desc  string   `json:"desc"`
+	Vars  []string `json:"variables"`
 }
 
 const configFile = "/usr/local/bin/compliance_check/config.json"

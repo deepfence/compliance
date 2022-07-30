@@ -15,9 +15,9 @@ import (
 )
 
 type Bench struct {
-	script Script
-	daemonOpts      []string
-	childCmd        *exec.Cmd
+	script     Script
+	daemonOpts []string
+	childCmd   *exec.Cmd
 }
 
 type DockerReplaceOpts struct {
@@ -26,17 +26,17 @@ type DockerReplaceOpts struct {
 }
 
 type benchItem struct {
-	Level       	  string
-	TestNum     	  string
-	Group       	  string
-	Header      	  string
-	Profile     	  string // level 1, 2
-	Scored      	  bool
-	Automated   	  bool
-	Message     	  string
-	Remediation 	  string
+	Level             string
+	TestNum           string
+	Group             string
+	Header            string
+	Profile           string // level 1, 2
+	Scored            bool
+	Automated         bool
+	Message           string
+	Remediation       string
 	RemediationImpact string
-	TestCategory 	  string
+	TestCategory      string
 }
 
 func (b *Bench) RunScripts() ([]byte, error) {

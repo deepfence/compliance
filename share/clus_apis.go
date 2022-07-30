@@ -1495,7 +1495,7 @@ type CLUSProcessProfileEntry struct {
 	Uuid            string    `json:"uuid"`
 	DerivedGroup    string    `json:"dgroup"`
 	AllowFileUpdate bool      `json:"allow_update"`
-	ProbeCmd        string	  `json:"probe_cmd"`
+	ProbeCmd        string    `json:"probe_cmd"`
 }
 
 type CLUSProcessProfile struct {
