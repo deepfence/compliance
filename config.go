@@ -1,4 +1,4 @@
-package compliance
+package main
 
 import (
 	"encoding/json"
@@ -10,9 +10,10 @@ type Script struct {
 	Files []string `json:"files"`
 	Name string `json:"name"`
 	Desc string `json:"desc"`
+	Vars []string `json:"variables"`
 }
 
-const configFile = "config.json"
+const configFile = "/usr/local/bin/compliance_check/config.json"
 
 func LoadConfig() (map[string]Script, error) {
 	configFile, err := os.Open(configFile)
