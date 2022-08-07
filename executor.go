@@ -49,7 +49,7 @@ func (b *Bench) RunScripts() ([]byte, error) {
 		for _, variable := range b.script.Vars {
 			value := os.Getenv(variable)
 			if value != "" {
-				fmt.Println("Applying env variable:" + variable + "with value: " + value)
+				// fmt.Println("Applying env variable:" + variable + "with value: " + value)
 				cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", variable, value))
 			}
 		}
