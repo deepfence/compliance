@@ -38,7 +38,7 @@
     ],
     "name": "HIPAA Compliance Checks",
     "desc": "HIPAA Compliance Checks",
-    "variables": ["pathPrefix", "NODE_TYPE"]
+    "variables": ["pathPrefix", "NODE_TYPE", "CIS_VERSION"]
   },
   "pcikube": {
     "files": [
@@ -46,7 +46,7 @@
     ],
     "name": "PCI Compliance Checks",
     "desc": "PCI Compliance Checks",
-    "variables": ["pathPrefix", "NODE_TYPE"]
+    "variables": ["pathPrefix", "NODE_TYPE", "CIS_VERSION"]
   },
   "gdprkube": {
     "files": [
@@ -54,7 +54,7 @@
     ],
     "name": "GDPR Compliance Checks",
     "desc": "GDPR Compliance Checks",
-    "variables": ["pathPrefix", "NODE_TYPE"]
+    "variables": ["pathPrefix", "NODE_TYPE", "CIS_VERSION"]
   },
   "nistkube": {
     "files": [
@@ -62,6 +62,6 @@
     ],
     "name": "NIST Compliance Checks",
     "desc": "NIST Compliance Checks",
-    "variables": ["pathPrefix", "NODE_TYPE"]
+    "variables": ["pathPrefix", "NODE_TYPE", "CIS_VERSION"]
   }
 }
