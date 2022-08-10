@@ -102,17 +102,6 @@ df_k8_4_1_5() {
   fi
 }
 
-check_4_1_6="4.1.6  - Ensure that the kubelet.conf file ownership is set to root:root (Manual)"
-if [ -f "$file" ]; then
-  if [ "$(stat -c %u%g $file)" -eq 00 ]; then
-    pass "$check_4_1_6"
-  else
-    warn "$check_4_1_6"
-    warn "     * Wrong ownership for $file"
-  fi
-else
-  info "$check_4_1_6"
-fi
 
 df_k8_4_1_6() {
   local id="df_k8_4_1_6"
@@ -131,20 +120,6 @@ df_k8_4_1_6() {
   fi
 }
 
-check_4_1_7="4.1.7  - Ensure that the certificate authorities file permissions are set to 644 or more restrictive (Manual)"
-if check_argument "$CIS_KUBELET_CMD" '--client-ca-file' >/dev/null 2>&1; then
-  file=$(get_argument_value "$CIS_KUBELET_CMD" '--client-ca-file')
-  if [ "$(stat -c %a $file)" -eq 644 -o "$(stat -c %a $file)" -eq 600 -o "$(stat -c %a $file)" -eq 400 ]; then
-    pass "$check_4_1_7"
-    pass "       * client-ca-file: $file"
-  else
-    warn "$check_4_1_7"
-    warn "     * Wrong permissions for $file"
-  fi
-else
-  info "$check_4_1_7"
-  info "     * --client-ca-file not set"
-fi
 
 df_k8_4_1_7() {
   local id="df_k8_4_1_7"
