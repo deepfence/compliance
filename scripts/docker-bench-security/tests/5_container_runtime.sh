@@ -11,6 +11,7 @@ check_5() {
 
 check_running_containers() {
   # If containers is empty, there are no running containers
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     info "  * No containers running, skipping Section 5"
     return
@@ -21,6 +22,7 @@ check_running_containers() {
 }
 
 check_5_1() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -59,6 +61,7 @@ check_5_1() {
 }
 
 check_5_2() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -97,6 +100,7 @@ check_5_2() {
 }
 
 check_5_3() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -138,6 +142,7 @@ check_5_3() {
 }
 
 check_5_4() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -176,6 +181,7 @@ check_5_4() {
 }
 
 check_5_5() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -233,6 +239,7 @@ check_5_5() {
 }
 
 check_5_6() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -285,6 +292,7 @@ check_5_6() {
 }
 
 check_5_7() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -327,6 +335,7 @@ check_5_7() {
 }
 
 check_5_8() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -368,6 +377,7 @@ check_5_8() {
 }
 
 check_5_9() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -406,6 +416,7 @@ check_5_9() {
 }
 
 check_5_10() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -447,6 +458,7 @@ check_5_10() {
 }
 
 check_5_11() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -488,6 +500,7 @@ check_5_11() {
 }
 
 check_5_12() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -526,6 +539,7 @@ check_5_12() {
 }
 
 check_5_13() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -564,6 +578,7 @@ check_5_13() {
 }
 
 check_5_14() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -602,6 +617,7 @@ check_5_14() {
 }
 
 check_5_15() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -640,6 +656,7 @@ check_5_15() {
 }
 
 check_5_16() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -678,6 +695,7 @@ check_5_16() {
 }
 
 check_5_17() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -717,6 +735,7 @@ check_5_17() {
 }
 
 check_5_18() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -756,6 +775,7 @@ check_5_18() {
 }
 
 check_5_19() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -793,6 +813,7 @@ check_5_19() {
 }
 
 check_5_20() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -831,6 +852,7 @@ check_5_20() {
 }
 
 check_5_21() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -868,6 +890,7 @@ check_5_21() {
 }
 
 check_5_22() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -884,6 +907,7 @@ check_5_22() {
 }
 
 check_5_23() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -900,6 +924,7 @@ check_5_23() {
 }
 
 check_5_24() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -938,6 +963,7 @@ check_5_24() {
 }
 
 check_5_25() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -973,6 +999,7 @@ check_5_25() {
 }
 
 check_5_26() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -1007,6 +1034,7 @@ check_5_26() {
 }
 
 check_5_27() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -1023,6 +1051,7 @@ check_5_27() {
 }
 
 check_5_28() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -1061,6 +1090,7 @@ check_5_28() {
 }
 
 check_5_29() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -1110,6 +1140,7 @@ check_5_29() {
 }
 
 check_5_30() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
@@ -1146,6 +1177,7 @@ check_5_30() {
 }
 
 check_5_31() {
+  containers=$(docker container ls --format "{{ .Names }}")
   if [ -z "$containers" ]; then
     return
   fi
