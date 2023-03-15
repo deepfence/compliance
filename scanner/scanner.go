@@ -1,6 +1,7 @@
 package scanner
 
 import (
+	"crypto/md5"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -67,7 +68,7 @@ func (c *ComplianceScanner) RunComplianceScan() error {
 			Status:              strings.ToLower(item.Level),
 			RemediationScript:   item.Remediation,
 			RemediationPuppet:   item.RemediationImpact,
-			NodeId:              c.config.NodeId,
+			NodeId:              fmt.Sprintf("%x", md5.Sum([]byte(c.config.NodeId+c.config.ScanId+item.TestNum+item.TestCategory))),
 			NodeType:            c.config.NodeType,
 			NodeName:            c.config.NodeName,
 			ComplianceCheckType: c.config.ComplianceCheckType,
