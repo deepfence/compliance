@@ -1,4 +1,4 @@
-package main
+package scanner
 
 import (
 	"bufio"
@@ -15,7 +15,7 @@ import (
 )
 
 type Bench struct {
-	script     Script
+	Script     Script
 	daemonOpts []string
 	childCmd   *exec.Cmd
 }
@@ -39,7 +39,7 @@ type benchItem struct {
 	TestCategory      string
 }
 
-func (b *Bench) RunScripts() ([]byte, error) {
+func (b *Bench) RunScripts() ([]benchItem, error) {
 	for _, destPath := range b.script.Files {
 
 		var errb, outb bytes.Buffer
@@ -85,12 +85,12 @@ func (b *Bench) RunScripts() ([]byte, error) {
 				fmt.Println(err.Error())
 			}
 		}
-		return out, nil
+		return items, nil
 	}
 	return nil, nil
 }
 
-//replace the docker daemon config line, so that can run the script without pid=host
+// replace the docker daemon config line, so that can run the script without pid=host
 func (b *Bench) replaceTemplateVars(srcPath, dstPath string, containers []string) error {
 	dat, err := ioutil.ReadFile(srcPath)
 	if err != nil {
