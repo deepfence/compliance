@@ -40,13 +40,13 @@ type benchItem struct {
 }
 
 func (b *Bench) RunScripts() ([]benchItem, error) {
-	for _, destPath := range b.script.Files {
+	for _, destPath := range b.Script.Files {
 
 		var errb, outb bytes.Buffer
 		//fmt.Println(args)
 		cmd := exec.Command("bash", destPath)
 		cmd.Env = os.Environ()
-		for _, variable := range b.script.Vars {
+		for _, variable := range b.Script.Vars {
 			value := os.Getenv(variable)
 			if value != "" {
 				cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", variable, value))
