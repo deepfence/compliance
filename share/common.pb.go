@@ -366,7 +366,7 @@ func init() {
 	proto.RegisterEnum("share.ProfilingMethod", ProfilingMethod_name, ProfilingMethod_value)
 }
 
-func init() { proto.RegisterFile("common.proto", fileDescriptor0) }
+func init() {  }
 
 var fileDescriptor0 = []byte{
 	// 455 bytes of a gzipped FileDescriptorProto
