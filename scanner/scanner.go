@@ -77,7 +77,11 @@ func (c *ComplianceScanner) RunComplianceScan() error {
 		complianceScanResults = append(complianceScanResults, compScan)
 	}
 	err = c.IngestComplianceResults(complianceScanResults)
-	return nil
+	if err != nil {
+		return err
+	}
+	err = c.PublishScanStatus("", "COMPLETE", nil)
+	return err
 }
 
 func (c *ComplianceScanner) publishErrorStatus(scanMsg string) {
