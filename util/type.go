@@ -41,7 +41,6 @@ type ComplianceDoc struct {
 	Status                string `json:"status"`
 	ComplianceCheckType   string `json:"compliance_check_type"`
 	ScanId                string `json:"scan_id"`
-	ComplianceNodeType    string `json:"compliance_node_type"`
 }
 
 type ComplianceScanLog struct {
