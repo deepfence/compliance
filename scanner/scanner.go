@@ -21,9 +21,11 @@ func NewComplianceScanner(config util.Config) (*ComplianceScanner, error) {
 	if err != nil {
 		return nil, err
 	}
-	_, exists := scriptConfig[config.ComplianceCheckType]
-	if !exists {
-		return nil, errors.New(fmt.Sprintf("invalid scan_type %s", config.ComplianceCheckType))
+	for _, complianceCheckType := range config.ComplianceCheckTypes {
+		_, exists := scriptConfig[complianceCheckType]
+		if !exists {
+			return nil, errors.New(fmt.Sprintf("invalid scan_type %s", complianceCheckType))
+		}
 	}
 	if config.ScanId == "" {
 		return nil, errors.New("scan_id is empty")
@@ -32,7 +34,7 @@ func NewComplianceScanner(config util.Config) (*ComplianceScanner, error) {
 }
 
 func (c *ComplianceScanner) RunComplianceScan() error {
-	err := c.PublishScanStatus("", "INPROGRESS", nil)
+	err := c.PublishScanStatus("", "IN_PROGRESS", nil)
 	if err != nil {
 		return err
 	}
@@ -42,43 +44,45 @@ func (c *ComplianceScanner) RunComplianceScan() error {
 	if err != nil {
 		return err
 	}
-	script, found := scriptConfig[c.config.ComplianceCheckType]
-	if !found {
-		return errors.New("Compliance Check Type not found. Exiting. ")
-	}
-	b := Bench{
-		Script: script,
-	}
-	benchItems, err := b.RunScripts()
 	var complianceScanResults []util.ComplianceDoc
-	timestamp := util.GetIntTimestamp()
-	timestampStr := util.GetDatetimeNow()
-	for _, item := range benchItems {
-		compScan := util.ComplianceDoc{
-			Type:                util.ComplianceScanLogs,
-			TimeStamp:           timestamp,
-			Timestamp:           timestampStr,
-			Masked:              false,
-			TestCategory:        item.TestCategory,
-			TestNumber:          item.TestNum,
-			TestInfo:            item.Header,
-			TestRationale:       "",
-			TestSeverity:        "",
-			TestDesc:            item.TestNum + " - " + item.Level,
-			Status:              strings.ToLower(item.Level),
-			RemediationScript:   item.Remediation,
-			RemediationPuppet:   item.RemediationImpact,
-			NodeId:              fmt.Sprintf("%x", md5.Sum([]byte(c.config.NodeId+c.config.ScanId+item.TestNum+item.TestCategory))),
-			NodeType:            "host",
-			NodeName:            c.config.NodeName,
-			ComplianceCheckType: c.config.ComplianceCheckType,
-			ScanId:              c.config.ScanId,
+	for _, complianceCheckType := range c.config.ComplianceCheckTypes {
+		script, found := scriptConfig[complianceCheckType]
+		if !found {
+			return errors.New("Compliance Check Type not found. Exiting. ")
 		}
-		complianceScanResults = append(complianceScanResults, compScan)
-	}
-	err = c.IngestComplianceResults(complianceScanResults)
-	if err != nil {
-		return err
+		b := Bench{
+			Script: script,
+		}
+		benchItems, err := b.RunScripts()
+		timestamp := util.GetIntTimestamp()
+		timestampStr := util.GetDatetimeNow()
+		for _, item := range benchItems {
+			compScan := util.ComplianceDoc{
+				Type:                util.ComplianceScanLogs,
+				TimeStamp:           timestamp,
+				Timestamp:           timestampStr,
+				Masked:              false,
+				TestCategory:        item.TestCategory,
+				TestNumber:          item.TestNum,
+				TestInfo:            item.Header,
+				TestRationale:       "",
+				TestSeverity:        "",
+				TestDesc:            item.TestNum + " - " + item.Level,
+				Status:              strings.ToLower(item.Level),
+				RemediationScript:   item.Remediation,
+				RemediationPuppet:   item.RemediationImpact,
+				NodeId:              fmt.Sprintf("%x", md5.Sum([]byte(c.config.NodeId+c.config.ScanId+item.TestNum+item.TestCategory))),
+				NodeType:            "host",
+				NodeName:            c.config.NodeName,
+				ComplianceCheckType: complianceCheckType,
+				ScanId:              c.config.ScanId,
+			}
+			complianceScanResults = append(complianceScanResults, compScan)
+		}
+		err = c.IngestComplianceResults(complianceScanResults)
+		if err != nil {
+			return err
+		}
 	}
 	err = c.PublishScanStatus("", "COMPLETE", nil)
 	return err
@@ -94,18 +98,18 @@ func (c *ComplianceScanner) publishErrorStatus(scanMsg string) {
 func (c *ComplianceScanner) PublishScanStatus(scanMsg string, status string, extras map[string]interface{}) error {
 	scanMsg = strings.Replace(scanMsg, "\n", " ", -1)
 	scanLog := map[string]interface{}{
-		"scan_id":               c.config.ScanId,
-		"time_stamp":            util.GetIntTimestamp(),
-		"@timestamp":            util.GetDatetimeNow(),
-		"scan_message":          scanMsg,
-		"scan_status":           status,
-		"type":                  util.ComplianceScanLogs,
-		"node_name":             c.config.NodeName,
-		"node_id":               c.config.NodeId,
-		"node_type":             "host",
-		"host_name":             c.config.NodeName,
-		"compliance_check_type": c.config.ComplianceCheckType,
-		"masked":                false,
+		"scan_id":                c.config.ScanId,
+		"time_stamp":             util.GetIntTimestamp(),
+		"@timestamp":             util.GetDatetimeNow(),
+		"scan_message":           scanMsg,
+		"scan_status":            status,
+		"type":                   util.ComplianceScanLogs,
+		"node_name":              c.config.NodeName,
+		"node_id":                c.config.NodeId,
+		"node_type":              "host",
+		"host_name":              c.config.NodeName,
+		"compliance_check_types": c.config.ComplianceCheckTypes,
+		"masked":                 false,
 	}
 	for k, v := range extras {
 		scanLog[k] = v

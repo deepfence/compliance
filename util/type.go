@@ -6,15 +6,15 @@ const (
 )
 
 type Config struct {
-	ManagementConsoleUrl      string `json:"management_console_url,omitempty"`
-	ManagementConsolePort     string `json:"management_console_port,omitempty"`
-	DeepfenceKey              string `json:"deepfence_key,omitempty"`
-	ScanId                    string `json:"scan_id,omitempty"`
-	NodeType                  string `json:"node_type,omitempty"`
-	NodeName                  string `json:"node_name"`
-	NodeId                    string `json:"node_id,omitempty"`
-	HostName                  string `json:"host_name,omitempty"`
-	ComplianceCheckType       string `json:"compliance_check_type"`
+	ManagementConsoleUrl      string   `json:"management_console_url,omitempty"`
+	ManagementConsolePort     string   `json:"management_console_port,omitempty"`
+	DeepfenceKey              string   `json:"deepfence_key,omitempty"`
+	ScanId                    string   `json:"scan_id,omitempty"`
+	NodeType                  string   `json:"node_type,omitempty"`
+	NodeName                  string   `json:"node_name"`
+	NodeId                    string   `json:"node_id,omitempty"`
+	HostName                  string   `json:"host_name,omitempty"`
+	ComplianceCheckTypes      []string `json:"compliance_check_types"`
 	ComplianceResultsFilePath string
 	ComplianceStatusFilePath  string
 }
