@@ -5,13 +5,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
 	"syscall"
 	"text/template"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type Bench struct {
@@ -39,7 +40,7 @@ type benchItem struct {
 	TestCategory      string
 }
 
-func (b *Bench) RunScripts() ([]benchItem, error) {
+func (b *Bench) RunScripts(printResults bool) ([]benchItem, error) {
 	for _, destPath := range b.Script.Files {
 
 		var errb, outb bytes.Buffer
@@ -80,7 +81,9 @@ func (b *Bench) RunScripts() ([]benchItem, error) {
 			//fmt.Println(item)
 			s, err := json.Marshal(item)
 			if err == nil {
-				fmt.Println(string(s))
+				if printResults == true {
+					fmt.Println(string(s))
+				}
 			} else {
 				fmt.Println(err.Error())
 			}

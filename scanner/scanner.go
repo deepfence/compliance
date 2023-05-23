@@ -5,11 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/deepfence/compliance/util"
-	"github.com/sirupsen/logrus"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/deepfence/compliance/util"
+	"github.com/sirupsen/logrus"
 )
 
 type ComplianceScanner struct {
@@ -53,7 +54,7 @@ func (c *ComplianceScanner) RunComplianceScan() error {
 		b := Bench{
 			Script: script,
 		}
-		benchItems, err := b.RunScripts()
+		benchItems, err := b.RunScripts(false)
 		timestamp := util.GetIntTimestamp()
 		timestampStr := util.GetDatetimeNow()
 		for _, item := range benchItems {

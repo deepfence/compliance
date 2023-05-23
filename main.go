@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+
 	"github.com/deepfence/compliance/scanner"
 )
 
@@ -24,5 +25,5 @@ func main() {
 	b := scanner.Bench{
 		Script: script,
 	}
-	b.RunScripts()
+	b.RunScripts(true)
 }
