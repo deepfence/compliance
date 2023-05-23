@@ -8,6 +8,7 @@ import (
 	"os"
 
 	sk "github.com/deepfence/compliance/share/system/sidekick"
+	log "github.com/sirupsen/logrus"
 )
 
 func verifyParentProcess() bool {
@@ -31,7 +32,7 @@ func main() {
 	case "ports":
 		ifaces := sk.GetGlobalAddrs()
 		value, _ := json.Marshal(ifaces)
-		fmt.Printf("%v", string(value[:]))
+		log.Infof("%v", string(value[:]))
 	case "route":
 		ip := net.ParseIP(*argIP)
 		if ip == nil {
@@ -42,7 +43,7 @@ func main() {
 		if err != nil {
 			os.Exit(-1)
 		}
-		fmt.Printf("%v", ipnet.String())
+		log.Infof("%v", ipnet.String())
 	default:
 		os.Exit(-1)
 	}

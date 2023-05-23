@@ -40,11 +40,10 @@ type benchItem struct {
 	TestCategory      string
 }
 
-func (b *Bench) RunScripts(printResults bool) ([]benchItem, error) {
+func (b *Bench) RunScripts() ([]benchItem, error) {
 	for _, destPath := range b.Script.Files {
 
 		var errb, outb bytes.Buffer
-		//fmt.Println(args)
 		cmd := exec.Command("bash", destPath)
 		cmd.Env = os.Environ()
 		for _, variable := range b.Script.Vars {
@@ -76,17 +75,13 @@ func (b *Bench) RunScripts(printResults bool) ([]benchItem, error) {
 			return nil, err
 		}
 		items := b.getBenchMsg(out)
-		// fmt.Println("Sending items to stdout:")
 		for _, item := range items {
-			//fmt.Println(item)
 			s, err := json.Marshal(item)
-			if err == nil {
-				if printResults == true {
-					fmt.Println(string(s))
-				}
-			} else {
-				fmt.Println(err.Error())
+			if err != nil {
+				log.Error(err.Error())
+				continue
 			}
+			log.Debug(string(s))
 		}
 		return items, nil
 	}

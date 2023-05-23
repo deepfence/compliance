@@ -17,6 +17,25 @@ type ComplianceScanner struct {
 	config util.Config
 }
 
+func init() {
+	lvl, ok := os.LookupEnv("LOG_LEVEL")
+	// LOG_LEVEL not set, let's default to debug
+	if !ok {
+		lvl = "info"
+	}
+	// parse string, this is built-in feature of logrus
+	ll, err := logrus.ParseLevel(lvl)
+	if err != nil {
+		ll = logrus.InfoLevel
+	}
+	// set global log level
+	logrus.SetLevel(ll)
+
+	customFormatter := new(logrus.TextFormatter)
+	customFormatter.TimestampFormat = "2006-01-02 15:04:05"
+	logrus.SetFormatter(customFormatter)
+}
+
 func NewComplianceScanner(config util.Config) (*ComplianceScanner, error) {
 	scriptConfig, err := LoadConfig()
 	if err != nil {
@@ -54,7 +73,7 @@ func (c *ComplianceScanner) RunComplianceScan() error {
 		b := Bench{
 			Script: script,
 		}
-		benchItems, err := b.RunScripts(false)
+		benchItems, err := b.RunScripts()
 		timestamp := util.GetIntTimestamp()
 		timestampStr := util.GetDatetimeNow()
 		for _, item := range benchItems {

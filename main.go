@@ -2,9 +2,9 @@ package main
 
 import (
 	"flag"
-	"fmt"
 
 	"github.com/deepfence/compliance/scanner"
+	log "github.com/sirupsen/logrus"
 )
 
 func main() {
@@ -16,14 +16,16 @@ func main() {
 		return
 	}
 	if *benchId == "" {
-		fmt.Println("Bench Id is required. Exiting.")
+		log.Error("Bench Id is required. Exiting.")
+		return
 	}
 	script, found := config[*benchId]
 	if !found {
-		fmt.Println("BenchId not found. Exiting. ")
+		log.Error("BenchId not found. Exiting. ")
+		return
 	}
 	b := scanner.Bench{
 		Script: script,
 	}
-	b.RunScripts(true)
+	b.RunScripts()
 }
