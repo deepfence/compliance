@@ -2,26 +2,30 @@ package main
 
 import (
 	"flag"
-	"fmt"
+
+	"github.com/deepfence/compliance/scanner"
+	log "github.com/sirupsen/logrus"
 )
 
 func main() {
 	benchId := flag.String("bench-id", "", "The id of set of scripts to be run for compliance check")
 	flag.String("NODE_TYPE", "", "Kubernetes node role master/worker")
 	flag.Parse()
-	config, err := LoadConfig()
+	config, err := scanner.LoadConfig()
 	if err != nil {
 		return
 	}
 	if *benchId == "" {
-		fmt.Println("Bench Id is required. Exiting.")
+		log.Error("Bench Id is required. Exiting.")
+		return
 	}
 	script, found := config[*benchId]
 	if !found {
-		fmt.Println("BenchId not found. Exiting. ")
+		log.Error("BenchId not found. Exiting. ")
+		return
 	}
-	b := Bench{
-		script: script,
+	b := scanner.Bench{
+		Script: script,
 	}
 	b.RunScripts()
 }

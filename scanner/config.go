@@ -1,9 +1,10 @@
-package main
+package scanner
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type Script struct {
@@ -19,14 +20,14 @@ func LoadConfig() (map[string]Script, error) {
 	configFile, err := os.Open(configFile)
 	defer configFile.Close()
 	if err != nil {
-		fmt.Println("error in reading config json file:" + err.Error())
+		log.Error("error in reading config json file:" + err.Error())
 		return nil, err
 	}
 	jsonParser := json.NewDecoder(configFile)
 	var config map[string]Script
 	err = jsonParser.Decode(&config)
 	if err != nil {
-		fmt.Println("error in parsing config json:" + err.Error())
+		log.Error("error in parsing config json:" + err.Error())
 		return nil, err
 	}
 	return config, nil

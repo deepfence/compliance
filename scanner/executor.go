@@ -1,21 +1,22 @@
-package main
+package scanner
 
 import (
 	"bufio"
 	"bytes"
 	"encoding/json"
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
 	"syscall"
 	"text/template"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type Bench struct {
-	script     Script
+	Script     Script
 	daemonOpts []string
 	childCmd   *exec.Cmd
 }
@@ -39,14 +40,13 @@ type benchItem struct {
 	TestCategory      string
 }
 
-func (b *Bench) RunScripts() ([]byte, error) {
-	for _, destPath := range b.script.Files {
+func (b *Bench) RunScripts() ([]benchItem, error) {
+	for _, destPath := range b.Script.Files {
 
 		var errb, outb bytes.Buffer
-		//fmt.Println(args)
 		cmd := exec.Command("bash", destPath)
 		cmd.Env = os.Environ()
-		for _, variable := range b.script.Vars {
+		for _, variable := range b.Script.Vars {
 			value := os.Getenv(variable)
 			if value != "" {
 				cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", variable, value))
@@ -75,22 +75,20 @@ func (b *Bench) RunScripts() ([]byte, error) {
 			return nil, err
 		}
 		items := b.getBenchMsg(out)
-		// fmt.Println("Sending items to stdout:")
 		for _, item := range items {
-			//fmt.Println(item)
 			s, err := json.Marshal(item)
-			if err == nil {
-				fmt.Println(string(s))
-			} else {
-				fmt.Println(err.Error())
+			if err != nil {
+				log.Error(err.Error())
+				continue
 			}
+			log.Debug(string(s))
 		}
-		return out, nil
+		return items, nil
 	}
 	return nil, nil
 }
 
-//replace the docker daemon config line, so that can run the script without pid=host
+// replace the docker daemon config line, so that can run the script without pid=host
 func (b *Bench) replaceTemplateVars(srcPath, dstPath string, containers []string) error {
 	dat, err := ioutil.ReadFile(srcPath)
 	if err != nil {
