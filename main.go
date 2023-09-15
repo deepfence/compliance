@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 
 	"github.com/deepfence/compliance/scanner"
@@ -27,5 +28,6 @@ func main() {
 	b := scanner.Bench{
 		Script: script,
 	}
-	b.RunScripts()
+
+	b.RunScripts(context.Background())
 }
