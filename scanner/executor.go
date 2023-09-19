@@ -3,6 +3,7 @@ package scanner
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -40,11 +41,11 @@ type benchItem struct {
 	TestCategory      string
 }
 
-func (b *Bench) RunScripts() ([]benchItem, error) {
+func (b *Bench) RunScripts(ctx context.Context) ([]benchItem, error) {
 	for _, destPath := range b.Script.Files {
 
 		var errb, outb bytes.Buffer
-		cmd := exec.Command("bash", destPath)
+		cmd := exec.CommandContext(ctx, "bash", destPath)
 		cmd.Env = os.Environ()
 		for _, variable := range b.Script.Vars {
 			value := os.Getenv(variable)
@@ -59,7 +60,9 @@ func (b *Bench) RunScripts() ([]benchItem, error) {
 
 		err := cmd.Start()
 		if err != nil {
-			log.WithFields(log.Fields{"error": err, "msg": errb.String()}).Error("Start")
+			if ctx.Err() != context.Canceled {
+				log.WithFields(log.Fields{"error": err, "msg": errb.String()}).Error("Start")
+			}
 			return nil, err
 		}
 		// global.SYS.AddToolProcess(pgid, 1, "host-bench", destPath)

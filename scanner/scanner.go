@@ -1,6 +1,7 @@
 package scanner
 
 import (
+	"context"
 	"crypto/md5"
 	"encoding/json"
 	"errors"
@@ -8,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"github.com/deepfence/compliance/util"
 	"github.com/sirupsen/logrus"
@@ -16,6 +18,8 @@ import (
 type ComplianceScanner struct {
 	config util.Config
 }
+
+var scanMap sync.Map
 
 func init() {
 	lvl, ok := os.LookupEnv("LOG_LEVEL")
@@ -34,6 +38,8 @@ func init() {
 	customFormatter := new(logrus.TextFormatter)
 	customFormatter.TimestampFormat = "2006-01-02 15:04:05"
 	logrus.SetFormatter(customFormatter)
+
+	scanMap = sync.Map{}
 }
 
 func NewComplianceScanner(config util.Config) (*ComplianceScanner, error) {
@@ -53,6 +59,23 @@ func NewComplianceScanner(config util.Config) (*ComplianceScanner, error) {
 	return &ComplianceScanner{config: config}, nil
 }
 
+func StopScan(scanId string) bool {
+	cancelFnObj, found := scanMap.Load(scanId)
+	logMsg := ""
+	successFlag := true
+	if !found {
+		logMsg = "Failed to Stop scan, may have already completed"
+		successFlag = false
+	} else {
+		cancelFn := cancelFnObj.(context.CancelFunc)
+		cancelFn()
+		logMsg = "Stop Compliance scan request submitted"
+	}
+
+	logrus.Infof("%s, scanid:%s", logMsg, scanId)
+	return successFlag
+}
+
 func (c *ComplianceScanner) RunComplianceScan() error {
 	err := c.PublishScanStatus("", "IN_PROGRESS", nil)
 	if err != nil {
@@ -65,6 +88,16 @@ func (c *ComplianceScanner) RunComplianceScan() error {
 		return err
 	}
 	var complianceScanResults []util.ComplianceDoc
+
+	ctx, cancel := context.WithCancel(context.Background())
+	logrus.Infof("Adding to scanMap, scanid:%s", c.config.ScanId)
+	scanMap.Store(c.config.ScanId, cancel)
+	defer func() {
+		logrus.Infof("Removing from scanMap, scanid:%s", c.config.ScanId)
+		scanMap.Delete(c.config.ScanId)
+	}()
+
+	stopped := false
 	for _, complianceCheckType := range c.config.ComplianceCheckTypes {
 		script, found := scriptConfig[complianceCheckType]
 		if !found {
@@ -73,7 +106,12 @@ func (c *ComplianceScanner) RunComplianceScan() error {
 		b := Bench{
 			Script: script,
 		}
-		benchItems, err := b.RunScripts()
+		benchItems, err := b.RunScripts(ctx)
+		if err != nil && ctx.Err() == context.Canceled {
+			stopped = true
+			break
+		}
+
 		timestamp := util.GetIntTimestamp()
 		timestampStr := util.GetDatetimeNow()
 		for _, item := range benchItems {
@@ -103,6 +141,11 @@ func (c *ComplianceScanner) RunComplianceScan() error {
 		if err != nil {
 			return err
 		}
+	}
+	if stopped == true {
+		logrus.Infof("Scan stopped by user request, scanid:%s", c.config.ScanId)
+		c.PublishScanStatus("Scan stopped by user request", "CANCELLED", nil)
+		return nil
 	}
 	err = c.PublishScanStatus("", "COMPLETE", nil)
 	return err
