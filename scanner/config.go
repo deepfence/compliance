@@ -14,7 +14,16 @@ type Script struct {
 	Vars  []string `json:"variables"`
 }
 
-const configFile = "/usr/local/bin/compliance_check/config.json"
+func getDfInstallDir() string {
+	installDir, exists := os.LookupEnv("DF_INSTALL_DIR")
+	if exists {
+		return installDir
+	} else {
+		return ""
+	}
+}
+
+var configFile = getDfInstallDir() + "/usr/local/bin/compliance_check/config.json"
 
 func LoadConfig() (map[string]Script, error) {
 	configFile, err := os.Open(configFile)
