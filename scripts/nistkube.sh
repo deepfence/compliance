@@ -1,6 +1,6 @@
-source /usr/local/bin/compliance_check/scripts/common.sh
-source /usr/local/bin/compliance_check/scripts/docker-bench-security/functions/helper_lib.sh
-source /usr/local/bin/compliance_check/scripts/kube-bench/helper1_6_0.sh
+source $DF_INSTALL_DIR/usr/local/bin/compliance_check/scripts/common.sh
+source $DF_INSTALL_DIR/usr/local/bin/compliance_check/scripts/docker-bench-security/functions/helper_lib.sh
+source $DF_INSTALL_DIR/usr/local/bin/compliance_check/scripts/kube-bench/helper1_6_0.sh
 if [ -z "${NODE_TYPE}" ]
 then
       NODE_TYPE="master"
@@ -9,7 +9,7 @@ if [ -z "$CIS_VERSION" ]
 then
       CIS_VERSION="1.6.0"
 fi
-source "/usr/local/bin/compliance_check/scripts/kube-bench/${CIS_VERSION}/${NODE_TYPE}.sh"
+source "${DF_INSTALL_DIR}/usr/local/bin/compliance_check/scripts/kube-bench/${CIS_VERSION}/${NODE_TYPE}.sh"
 
 if [[ $NODE_TYPE == "master" ]]
 then
