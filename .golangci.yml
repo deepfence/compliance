@@ -1,0 +1,15 @@
+linters:
+  enable:
+  - stylecheck
+  - gocritic
+  # - dupl
+  - durationcheck
+  # - goconst
+  - gofmt
+  - goimports
+  # - misspell
+  # - nestif
+
+run:
+  skip-dirs:
+  - share

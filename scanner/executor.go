@@ -6,25 +6,22 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
 	"syscall"
-	"text/template"
 
 	log "github.com/sirupsen/logrus"
 )
 
 type Bench struct {
-	Script     Script
-	daemonOpts []string
-	childCmd   *exec.Cmd
+	Script   Script
+	childCmd *exec.Cmd
 }
 
 type DockerReplaceOpts struct {
-	Replace_docker_daemon_opts string
-	Replace_container_list     string
+	ReplaceDockerDaemonOpts string
+	ReplaceContainerList    string
 }
 
 type benchItem struct {
@@ -65,7 +62,7 @@ func (b *Bench) RunScripts(ctx context.Context) ([]benchItem, error) {
 			}
 			return nil, err
 		}
-		// global.SYS.AddToolProcess(pgid, 1, "host-bench", destPath)
+
 		err = cmd.Wait()
 		out := outb.Bytes()
 
@@ -89,40 +86,6 @@ func (b *Bench) RunScripts(ctx context.Context) ([]benchItem, error) {
 		return items, nil
 	}
 	return nil, nil
-}
-
-// replace the docker daemon config line, so that can run the script without pid=host
-func (b *Bench) replaceTemplateVars(srcPath, dstPath string, containers []string) error {
-	dat, err := ioutil.ReadFile(srcPath)
-	if err != nil {
-		return err
-	}
-	f, err := os.Create(dstPath)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	//containers only apply to container.sh, no effect to host.sh, because no <<<Containers>>> in it
-	var containerLines string
-	if len(containers) > 0 {
-		containerLines = "containers=\"\n" + strings.Join(containers, "\n") + "\"\n"
-	} else {
-		containerLines = "containers=\"\"\n"
-	}
-	r := DockerReplaceOpts{
-		Replace_docker_daemon_opts: strings.Join(b.daemonOpts, " "),
-		Replace_container_list:     containerLines,
-	}
-	t := template.New("bench")
-	t.Delims("<<<", ">>>")
-	t.Parse(string(dat))
-
-	if err = t.Execute(f, r); err != nil {
-		log.WithFields(log.Fields{"error": err}).Error("Executing template error")
-		return err
-	}
-	return nil
 }
 
 func (b *Bench) getBenchMsg(out []byte) []benchItem {

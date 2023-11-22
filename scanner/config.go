@@ -27,7 +27,7 @@ var configFile = getDfInstallDir() + "/usr/local/bin/compliance_check/config.jso
 
 func LoadConfig() (map[string]Script, error) {
 	configFile, err := os.Open(configFile)
-	defer configFile.Close()
+	defer func() { _ = configFile.Close() }()
 	if err != nil {
 		log.Error("error in reading config json file:" + err.Error())
 		return nil, err
