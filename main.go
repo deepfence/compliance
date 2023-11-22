@@ -9,25 +9,25 @@ import (
 )
 
 func main() {
-	benchId := flag.String("bench-id", "", "The id of set of scripts to be run for compliance check")
+	benchID := flag.String("bench-id", "", "The id of set of scripts to be run for compliance check")
 	flag.String("NODE_TYPE", "", "Kubernetes node role master/worker")
 	flag.Parse()
 	config, err := scanner.LoadConfig()
 	if err != nil {
 		return
 	}
-	if *benchId == "" {
-		log.Error("Bench Id is required. Exiting.")
+	if *benchID == "" {
+		log.Error("bench-id is required. Exiting.")
 		return
 	}
-	script, found := config[*benchId]
+	script, found := config[*benchID]
 	if !found {
-		log.Error("BenchId not found. Exiting. ")
+		log.Error("bench-id not found. Exiting. ")
 		return
 	}
-	b := scanner.Bench{
-		Script: script,
-	}
+	b := scanner.Bench{Script: script}
 
-	b.RunScripts(context.Background())
+	if _, err := b.RunScripts(context.Background()); err != nil {
+		log.Errorf("RunScripts: %v", err)
+	}
 }

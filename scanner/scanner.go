@@ -19,7 +19,13 @@ type ComplianceScanner struct {
 	config util.Config
 }
 
-var scanMap sync.Map
+var (
+	scanMap sync.Map
+
+	ErrScanNotFound        = errors.New("failed to stop scan, may have already completed")
+	ErrScanCancelTypecast  = errors.New("failed to stop scan, cancel function is not an instance of context.CancelFunc")
+	ErrComplianceCheckType = errors.New("compliance check type not found")
+)
 
 func init() {
 	lvl, ok := os.LookupEnv("LOG_LEVEL")
@@ -50,30 +56,29 @@ func NewComplianceScanner(config util.Config) (*ComplianceScanner, error) {
 	for _, complianceCheckType := range config.ComplianceCheckTypes {
 		_, exists := scriptConfig[complianceCheckType]
 		if !exists {
-			return nil, errors.New(fmt.Sprintf("invalid scan_type %s", complianceCheckType))
+			return nil, fmt.Errorf("invalid scan_type %s", complianceCheckType)
 		}
 	}
-	if config.ScanId == "" {
+	if config.ScanID == "" {
 		return nil, errors.New("scan_id is empty")
 	}
 	return &ComplianceScanner{config: config}, nil
 }
 
-func StopScan(scanId string) bool {
-	cancelFnObj, found := scanMap.Load(scanId)
-	logMsg := ""
-	successFlag := true
+func StopScan(scanID string) error {
+	cancelFnObj, found := scanMap.Load(scanID)
 	if !found {
-		logMsg = "Failed to Stop scan, may have already completed"
-		successFlag = false
-	} else {
-		cancelFn := cancelFnObj.(context.CancelFunc)
-		cancelFn()
-		logMsg = "Stop Compliance scan request submitted"
+		return ErrScanNotFound
 	}
 
-	logrus.Infof("%s, scanid:%s", logMsg, scanId)
-	return successFlag
+	cancelFn, ok := cancelFnObj.(context.CancelFunc)
+	if !ok {
+		return ErrScanCancelTypecast
+	}
+
+	cancelFn()
+
+	return nil
 }
 
 func (c *ComplianceScanner) RunComplianceScan() error {
@@ -81,7 +86,7 @@ func (c *ComplianceScanner) RunComplianceScan() error {
 	if err != nil {
 		return err
 	}
-	tempFileName := fmt.Sprintf("/tmp/tmp-%s.json", c.config.ScanId)
+	tempFileName := fmt.Sprintf("/tmp/tmp-%s.json", c.config.ScanID)
 	defer os.Remove(tempFileName)
 	scriptConfig, err := LoadConfig()
 	if err != nil {
@@ -90,18 +95,18 @@ func (c *ComplianceScanner) RunComplianceScan() error {
 	var complianceScanResults []util.ComplianceDoc
 
 	ctx, cancel := context.WithCancel(context.Background())
-	logrus.Infof("Adding to scanMap, scanid:%s", c.config.ScanId)
-	scanMap.Store(c.config.ScanId, cancel)
+	logrus.Infof("Adding to scanMap, scanid:%s", c.config.ScanID)
+	scanMap.Store(c.config.ScanID, cancel)
 	defer func() {
-		logrus.Infof("Removing from scanMap, scanid:%s", c.config.ScanId)
-		scanMap.Delete(c.config.ScanId)
+		logrus.Infof("Removing from scanMap, scanid:%s", c.config.ScanID)
+		scanMap.Delete(c.config.ScanID)
 	}()
 
 	stopped := false
 	for _, complianceCheckType := range c.config.ComplianceCheckTypes {
 		script, found := scriptConfig[complianceCheckType]
 		if !found {
-			return errors.New("Compliance Check Type not found. Exiting. ")
+			return ErrComplianceCheckType
 		}
 		b := Bench{
 			Script: script,
@@ -129,11 +134,11 @@ func (c *ComplianceScanner) RunComplianceScan() error {
 				Status:              strings.ToLower(item.Level),
 				RemediationScript:   item.Remediation,
 				RemediationPuppet:   item.RemediationImpact,
-				NodeId:              fmt.Sprintf("%x", md5.Sum([]byte(c.config.NodeId+c.config.ScanId+item.TestNum+item.TestCategory))),
+				NodeID:              fmt.Sprintf("%x", md5.Sum([]byte(c.config.NodeID+c.config.ScanID+item.TestNum+item.TestCategory))),
 				NodeType:            "host",
 				NodeName:            c.config.NodeName,
 				ComplianceCheckType: complianceCheckType,
-				ScanId:              c.config.ScanId,
+				ScanID:              c.config.ScanID,
 			}
 			complianceScanResults = append(complianceScanResults, compScan)
 		}
@@ -142,33 +147,26 @@ func (c *ComplianceScanner) RunComplianceScan() error {
 			return err
 		}
 	}
-	if stopped == true {
-		logrus.Infof("Scan stopped by user request, scanid:%s", c.config.ScanId)
-		c.PublishScanStatus("Scan stopped by user request", "CANCELLED", nil)
-		return nil
-	}
-	err = c.PublishScanStatus("", "COMPLETE", nil)
-	return err
-}
 
-func (c *ComplianceScanner) publishErrorStatus(scanMsg string) {
-	err := c.PublishScanStatus(scanMsg, "ERROR", nil)
-	if err != nil {
-		logrus.Error(err)
+	if stopped {
+		logrus.Infof("Scan stopped by user request, scanid:%s", c.config.ScanID)
+		return c.PublishScanStatus("Scan stopped by user request", "CANCELLED", nil)
 	}
+
+	return c.PublishScanStatus("", "COMPLETE", nil)
 }
 
 func (c *ComplianceScanner) PublishScanStatus(scanMsg string, status string, extras map[string]interface{}) error {
-	scanMsg = strings.Replace(scanMsg, "\n", " ", -1)
+	scanMsg = strings.ReplaceAll(scanMsg, "\n", " ")
 	scanLog := map[string]interface{}{
-		"scan_id":                c.config.ScanId,
+		"scan_id":                c.config.ScanID,
 		"time_stamp":             util.GetIntTimestamp(),
 		"@timestamp":             util.GetDatetimeNow(),
 		"scan_message":           scanMsg,
 		"scan_status":            status,
 		"type":                   util.ComplianceScanLogs,
 		"node_name":              c.config.NodeName,
-		"node_id":                c.config.NodeId,
+		"node_id":                c.config.NodeID,
 		"node_type":              "host",
 		"host_name":              c.config.NodeName,
 		"compliance_check_types": c.config.ComplianceCheckTypes,
@@ -177,21 +175,26 @@ func (c *ComplianceScanner) PublishScanStatus(scanMsg string, status string, ext
 	for k, v := range extras {
 		scanLog[k] = v
 	}
-	err := os.MkdirAll(filepath.Dir(c.config.ComplianceStatusFilePath), 0755)
+
+	dir := filepath.Dir(c.config.ComplianceStatusFilePath)
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		return fmt.Errorf("os.MkdirAll %s: %w", dir, err)
+	}
 	f, err := os.OpenFile(c.config.ComplianceStatusFilePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
 		logrus.Errorf("error opening file:%v", err)
-		return err
+		return fmt.Errorf("os.Openfile %s: %w", c.config.ComplianceStatusFilePath, err)
 	}
-	byteJson, err := json.Marshal(scanLog)
+	byteJSON, err := json.Marshal(scanLog)
 	if err != nil {
 		logrus.Errorf("Error in formatting json: %+v", scanLog)
-		return err
+		return fmt.Errorf("json.Marshal: %w", err)
 	}
-	if _, err = f.WriteString(string(byteJson) + "\n"); err != nil {
+	if _, err = f.WriteString(string(byteJSON) + "\n"); err != nil {
 		logrus.Errorf("%+v \n", err)
+		return fmt.Errorf("f.WriteString: %w", err)
 	}
-	return err
+	return nil
 }
 
 func (c *ComplianceScanner) IngestComplianceResults(complianceDocs []util.ComplianceDoc) error {
@@ -215,14 +218,14 @@ func (c *ComplianceScanner) IngestComplianceResults(complianceDocs []util.Compli
 	}
 	defer f.Close()
 	for _, d := range data {
-		byteJson, err := json.Marshal(d)
+		byteJSON, err := json.Marshal(d)
 		if err != nil {
 			logrus.Errorf("%+v \n", err)
 			continue
 		}
-		strJson := string(byteJson)
-		strJson = strings.Replace(strJson, "\n", " ", -1)
-		if _, err = f.WriteString(strJson + "\n"); err != nil {
+		strJSON := string(byteJSON)
+		strJSON = strings.ReplaceAll(strJSON, "\n", " ")
+		if _, err = f.WriteString(strJSON + "\n"); err != nil {
 			logrus.Errorf("%+v \n", err)
 		}
 	}

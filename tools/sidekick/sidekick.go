@@ -32,7 +32,7 @@ func main() {
 	case "ports":
 		ifaces := sk.GetGlobalAddrs()
 		value, _ := json.Marshal(ifaces)
-		log.Infof("%v", string(value[:]))
+		log.Infof("%v", string(value))
 	case "route":
 		ip := net.ParseIP(*argIP)
 		if ip == nil {
