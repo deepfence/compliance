@@ -134,7 +134,7 @@ func (c *ComplianceScanner) RunComplianceScan() error {
 				Status:              strings.ToLower(item.Level),
 				RemediationScript:   item.Remediation,
 				RemediationPuppet:   item.RemediationImpact,
-				NodeID:              fmt.Sprintf("%x", md5.Sum([]byte(c.config.NodeID+c.config.ScanID+item.TestNum+item.TestCategory))),
+				NodeID:              fmt.Sprintf("%x", md5.Sum([]byte(c.config.NodeID+c.config.ScanID+item.TestNum+item.TestCategory+complianceCheckType))),
 				NodeType:            "host",
 				NodeName:            c.config.NodeName,
 				ComplianceCheckType: complianceCheckType,
