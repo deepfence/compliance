@@ -42,7 +42,7 @@ func (b *Bench) RunScripts(ctx context.Context) ([]benchItem, error) {
 	for _, destPath := range b.Script.Files {
 
 		var errb, outb bytes.Buffer
-		cmd := exec.CommandContext(ctx, "bash", destPath)
+		cmd := exec.CommandContext(ctx, "bash", getDfInstallDir()+destPath)
 		cmd.Env = os.Environ()
 		for _, variable := range b.Script.Vars {
 			value := os.Getenv(variable)
