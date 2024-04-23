@@ -42,21 +42,3 @@ type ComplianceDoc struct {
 	ComplianceCheckType   string `json:"compliance_check_type"`
 	ScanID                string `json:"scan_id"`
 }
-
-type ComplianceScanLog struct {
-	Type                  string         `json:"type"`
-	TimeStamp             int64          `json:"time_stamp"`
-	Timestamp             string         `json:"@timestamp"`
-	Masked                bool           `json:"masked"`
-	NodeID                string         `json:"node_id"`
-	NodeType              string         `json:"node_type"`
-	KubernetesClusterName string         `json:"kubernetes_cluster_name"`
-	KubernetesClusterID   string         `json:"kubernetes_cluster_id"`
-	NodeName              string         `json:"node_name"`
-	ScanStatus            string         `json:"scan_status"`
-	ScanMessage           string         `json:"scan_message"`
-	ComplianceCheckType   string         `json:"compliance_check_type"`
-	TotalChecks           int            `json:"total_checks"`
-	Result                map[string]int `json:"result"`
-	ScanID                string         `json:"scan_id"`
-}

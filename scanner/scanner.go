@@ -159,18 +159,9 @@ func (c *ComplianceScanner) RunComplianceScan() error {
 func (c *ComplianceScanner) PublishScanStatus(scanMsg string, status string, extras map[string]interface{}) error {
 	scanMsg = strings.ReplaceAll(scanMsg, "\n", " ")
 	scanLog := map[string]interface{}{
-		"scan_id":                c.config.ScanID,
-		"time_stamp":             util.GetIntTimestamp(),
-		"@timestamp":             util.GetDatetimeNow(),
-		"scan_message":           scanMsg,
-		"scan_status":            status,
-		"type":                   util.ComplianceScanLogs,
-		"node_name":              c.config.NodeName,
-		"node_id":                c.config.NodeID,
-		"node_type":              "host",
-		"host_name":              c.config.NodeName,
-		"compliance_check_types": c.config.ComplianceCheckTypes,
-		"masked":                 false,
+		"scan_id":      c.config.ScanID,
+		"scan_message": scanMsg,
+		"scan_status":  status,
 	}
 	for k, v := range extras {
 		scanLog[k] = v
