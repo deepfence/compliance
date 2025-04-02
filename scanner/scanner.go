@@ -22,6 +22,8 @@ type ComplianceScanner struct {
 var (
 	scanMap sync.Map
 
+	serverlessAgent bool
+
 	ErrScanNotFound        = errors.New("failed to stop scan, may have already completed")
 	ErrScanCancelTypecast  = errors.New("failed to stop scan, cancel function is not an instance of context.CancelFunc")
 	ErrComplianceCheckType = errors.New("compliance check type not found")
@@ -46,6 +48,12 @@ func init() {
 	logrus.SetFormatter(customFormatter)
 
 	scanMap = sync.Map{}
+
+	if os.Getenv("DF_SERVERLESS") == "true" {
+		serverlessAgent = true
+	} else {
+		serverlessAgent = false
+	}
 }
 
 func NewComplianceScanner(config util.Config) (*ComplianceScanner, error) {
@@ -82,6 +90,10 @@ func StopScan(scanID string) error {
 }
 
 func (c *ComplianceScanner) RunComplianceScan() error {
+	if serverlessAgent == true {
+		return c.PublishScanStatus("", "COMPLETE", nil)
+	}
+
 	err := c.PublishScanStatus("", "IN_PROGRESS", nil)
 	if err != nil {
 		return err

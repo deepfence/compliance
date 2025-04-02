@@ -3,7 +3,7 @@ module github.com/deepfence/compliance
 go 1.23.2
 
 require (
-	github.com/aws/aws-sdk-go v1.55.5
+	github.com/aws/aws-sdk-go v1.55.6
 	github.com/golang/protobuf v1.5.4
 	github.com/sirupsen/logrus v1.9.3
 	github.com/vishvananda/netlink v1.3.0
