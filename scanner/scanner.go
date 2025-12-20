@@ -12,7 +12,8 @@ import (
 	"sync"
 
 	"github.com/deepfence/compliance/util"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 type ComplianceScanner struct {
@@ -30,22 +31,28 @@ var (
 )
 
 func init() {
+	// Configure zerolog
+	zerolog.TimeFieldFormat = "2006-01-02 15:04:05"
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: "2006-01-02 15:04:05"})
+
 	lvl, ok := os.LookupEnv("LOG_LEVEL")
-	// LOG_LEVEL not set, let's default to debug
+	// LOG_LEVEL not set, let's default to info
 	if !ok {
 		lvl = "info"
 	}
-	// parse string, this is built-in feature of logrus
-	ll, err := logrus.ParseLevel(lvl)
-	if err != nil {
-		ll = logrus.InfoLevel
+	// parse string and set log level
+	switch strings.ToLower(lvl) {
+	case "debug":
+		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	case "info":
+		zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	case "warn", "warning":
+		zerolog.SetGlobalLevel(zerolog.WarnLevel)
+	case "error":
+		zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+	default:
+		zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	}
-	// set global log level
-	logrus.SetLevel(ll)
-
-	customFormatter := new(logrus.TextFormatter)
-	customFormatter.TimestampFormat = "2006-01-02 15:04:05"
-	logrus.SetFormatter(customFormatter)
 
 	scanMap = sync.Map{}
 
@@ -107,10 +114,10 @@ func (c *ComplianceScanner) RunComplianceScan() error {
 	var complianceScanResults []util.ComplianceDoc
 
 	ctx, cancel := context.WithCancel(context.Background())
-	logrus.Infof("Adding to scanMap, scanid:%s", c.config.ScanID)
+	log.Info().Str("scanid", c.config.ScanID).Msg("Adding to scanMap")
 	scanMap.Store(c.config.ScanID, cancel)
 	defer func() {
-		logrus.Infof("Removing from scanMap, scanid:%s", c.config.ScanID)
+		log.Info().Str("scanid", c.config.ScanID).Msg("Removing from scanMap")
 		scanMap.Delete(c.config.ScanID)
 	}()
 
@@ -161,7 +168,7 @@ func (c *ComplianceScanner) RunComplianceScan() error {
 	}
 
 	if stopped {
-		logrus.Infof("Scan stopped by user request, scanid:%s", c.config.ScanID)
+		log.Info().Str("scanid", c.config.ScanID).Msg("Scan stopped by user request")
 		return c.PublishScanStatus("Scan stopped by user request", "CANCELLED", nil)
 	}
 
@@ -185,30 +192,30 @@ func (c *ComplianceScanner) PublishScanStatus(scanMsg string, status string, ext
 	}
 	f, err := os.OpenFile(c.config.ComplianceStatusFilePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
-		logrus.Errorf("error opening file:%v", err)
+		log.Error().Err(err).Msg("error opening file")
 		return fmt.Errorf("os.Openfile %s: %w", c.config.ComplianceStatusFilePath, err)
 	}
 	byteJSON, err := json.Marshal(scanLog)
 	if err != nil {
-		logrus.Errorf("Error in formatting json: %+v", scanLog)
+		log.Error().Interface("scanLog", scanLog).Msg("Error in formatting json")
 		return fmt.Errorf("json.Marshal: %w", err)
 	}
 	if _, err = f.WriteString(string(byteJSON) + "\n"); err != nil {
-		logrus.Errorf("%+v \n", err)
+		log.Error().Err(err).Msg("")
 		return fmt.Errorf("f.WriteString: %w", err)
 	}
 	return nil
 }
 
 func (c *ComplianceScanner) IngestComplianceResults(complianceDocs []util.ComplianceDoc) error {
-	logrus.Debugf("Number of docs to ingest: %d", len(complianceDocs))
+	log.Debug().Int("count", len(complianceDocs)).Msg("Number of docs to ingest")
 	data := make([]map[string]interface{}, len(complianceDocs))
 	for index, complianceDoc := range complianceDocs {
 		mapData, err := util.StructToMap(complianceDoc)
 		if err == nil {
 			data[index] = mapData
 		} else {
-			logrus.Error(err)
+			log.Error().Err(err).Msg("")
 		}
 	}
 	err := os.MkdirAll(filepath.Dir(c.config.ComplianceResultsFilePath), 0755)
@@ -223,13 +230,13 @@ func (c *ComplianceScanner) IngestComplianceResults(complianceDocs []util.Compli
 	for _, d := range data {
 		byteJSON, err := json.Marshal(d)
 		if err != nil {
-			logrus.Errorf("%+v \n", err)
+			log.Error().Err(err).Msg("")
 			continue
 		}
 		strJSON := string(byteJSON)
 		strJSON = strings.ReplaceAll(strJSON, "\n", " ")
 		if _, err = f.WriteString(strJSON + "\n"); err != nil {
-			logrus.Errorf("%+v \n", err)
+			log.Error().Err(err).Msg("")
 		}
 	}
 	return nil

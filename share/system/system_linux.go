@@ -24,7 +24,7 @@ import (
 	"strings"
 	"syscall"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 	"github.com/vishvananda/netns"
 
 	namespace "github.com/deepfence/compliance/share/system/ns"
@@ -97,7 +97,7 @@ func NewSystemTools() *SystemTools {
 	// fill cgroup info
 	// https://github.com/opencontainers/runc/blob/master/docs/cgroup-v2.md
 	if _, err := os.Stat("/sys/fs/cgroup/cgroup.controllers"); err == nil {
-		log.Info("cgroup v2")
+		log.Info().Msg("cgroup v2")
 		s.cgroupVersion = cgroup_v2
 		// update cgroup v2 path
 		if path, err := getCgroupPath_cgroup_v2(0); err == nil {
@@ -106,7 +106,7 @@ func NewSystemTools() *SystemTools {
 			s.cgroupMemoryDir = "/sys/fs/cgroup" // last resort
 		}
 	} else {
-		log.Info("cgroup v1")
+		log.Info().Msg("cgroup v1")
 		s.cgroupVersion = cgroup_v1
 		s.cgroupMemoryDir = "/sys/fs/cgroup/memory"
 	}
@@ -137,20 +137,20 @@ func (s *SystemTools) CallNetNamespaceFuncWithoutLock(pid int, cb NSCallback, pa
 	var ns netns.NsHandle
 	netns_path := filepath.Join(s.procDir, strconv.Itoa(pid), "ns/net")
 	if ns, err = netns.GetFromPath(netns_path); err != nil {
-		log.WithFields(log.Fields{"pid": pid, "err": err}).Error("fail to get namespace")
+		log.Error().Int("pid", pid).Err(err).Msg("fail to get namespace")
 		return err
 	}
 	defer ns.Close()
 
 	// Switch to namespace
-	log.WithFields(log.Fields{"ns": ns, "pid": pid}).Debug("Switch net ns")
+	log.Debug().Uint("ns", uint(ns)).Int("pid", pid).Msg("Switch net ns")
 	if err = netns.Set(ns); err != nil {
 		return err
 	}
 
 	cb(params)
 
-	log.WithFields(log.Fields{"cur_ns": cur_ns}).Debug("Restore net ns")
+	log.Debug().Uint("cur_ns", uint(cur_ns)).Msg("Restore net ns")
 	netns.Set(cur_ns)
 
 	return nil
@@ -170,7 +170,7 @@ func (s *SystemTools) CallNamespaceFunc(nsid int, nstypes []string, cb NSCallbac
 	for i, ns := range nstypes {
 		cur_ns[i], err = namespace.CurNsHandle(ns)
 		if err != nil {
-			log.WithFields(log.Fields{"namespace": ns, "error": err}).Debug("Failed to store")
+			log.Debug().Str("namespace", ns).Err(err).Msg("Failed to store")
 			return err
 		}
 		defer cur_ns[i].Close()
@@ -180,7 +180,7 @@ func (s *SystemTools) CallNamespaceFunc(nsid int, nstypes []string, cb NSCallbac
 	for i, ns := range nstypes {
 		new_ns[i], err = namespace.NewNsHandle(ns, s.procDir, nsid)
 		if err != nil {
-			log.WithFields(log.Fields{"namespace": ns, "error": err}).Debug("Failed to open")
+			log.Debug().Str("namespace", ns).Err(err).Msg("Failed to open")
 			return err
 		}
 		defer new_ns[i].Close()
@@ -189,12 +189,12 @@ func (s *SystemTools) CallNamespaceFunc(nsid int, nstypes []string, cb NSCallbac
 	// Switch to namespace
 	for i, ns := range nstypes {
 		if err = namespace.Set(new_ns[i]); err != nil {
-			log.WithFields(log.Fields{"namespace": ns, "error": err}).Debug("Failed to switch to")
+			log.Debug().Str("namespace", ns).Err(err).Msg("Failed to switch to")
 			return err
 		}
 		defer namespace.Set(cur_ns[i])
 
-		log.WithFields(log.Fields{"namespace": ns, "pid": nsid}).Debug("Switch to")
+		log.Debug().Str("namespace", ns).Int("pid", nsid).Msg("Switch to")
 	}
 
 	cb(params)
@@ -207,7 +207,7 @@ func (s *SystemTools) GetHostname(pid int) string {
 
 	s.CallNamespaceFunc(pid, []string{namespace.NSUTS}, func(params interface{}) {
 		if data, err := ioutil.ReadFile("/proc/sys/kernel/hostname"); err != nil {
-			log.WithFields(log.Fields{"error": err}).Error("Failed to read hostname")
+			log.Error().Err(err).Msg("Failed to read hostname")
 		} else {
 			hostname = strings.TrimSpace(string(data))
 		}
@@ -239,11 +239,11 @@ func (s *SystemTools) GetBindAddr(addr net.IP) (string, *net.IPNet) {
 	// Use local routes to get bind address
 	port, bind, err := sk.GetRouteIfaceAddr(addr)
 	if err != nil {
-		log.WithFields(log.Fields{"error": err}).Error("Failed to get bind address")
+		log.Error().Err(err).Msg("Failed to get bind address")
 		return "", nil
 	}
 
-	log.WithFields(log.Fields{"bind": bind}).Debug("")
+	log.Debug().Interface("bind", bind).Msg("")
 	return port, bind
 }
 
@@ -254,22 +254,22 @@ func (s *SystemTools) GetAdvertiseAddr(addr net.IP) net.IP {
 
 	routeAddr, routeErr := s.GetHostRouteIfaceAddr(addr)
 	if routeErr != nil {
-		log.WithFields(log.Fields{"error": routeErr}).Error("Failed to get advertise address")
+		log.Error().Err(routeErr).Msg("Failed to get advertise address")
 		return nil
 	}
 
-	log.WithFields(log.Fields{"advertise": routeAddr}).Debug("")
+	log.Debug().Interface("advertise", routeAddr).Msg("")
 	return routeAddr
 }
 
 func (s *SystemTools) GetGlobalAddrs(device_only bool) map[string][]net.IPNet {
 	ifaces := sk.GetGlobalAddrs()
 
-	log.WithFields(log.Fields{"device_only": device_only}).Debug("")
+	log.Debug().Bool("device_only", device_only).Msg("")
 
 	ipnets := make(map[string][]net.IPNet)
 	for name, iface := range ifaces {
-		log.WithFields(log.Fields{"link": name, "type": iface.Type}).Debug("")
+		log.Debug().Str("link", name).Str("type", iface.Type).Msg("")
 
 		if device_only && iface.Type != "device" {
 			continue
@@ -277,7 +277,7 @@ func (s *SystemTools) GetGlobalAddrs(device_only bool) map[string][]net.IPNet {
 
 		for _, addr := range iface.Addrs {
 			ipnets[name] = append(ipnets[name], addr.IPNet)
-			log.WithFields(log.Fields{"link": name, "ipnet": addr.IPNet}).Debug("Add")
+			log.Debug().Str("link", name).Str("ipnet", addr.IPNet.String()).Msg("Add")
 		}
 	}
 
@@ -389,7 +389,7 @@ func (s *SystemTools) CheckHostProgram(prog string, pid int) ([]byte, error) {
 	cmd.Stderr = &errb
 	err := cmd.Start()
 	if err != nil {
-		log.WithFields(log.Fields{"error": err, "msg": errb.String()}).Error("Start")
+		log.Error().Err(err).Str("msg", errb.String()).Msg("Start")
 		return nil, err
 	}
 	pgid := cmd.Process.Pid
@@ -397,7 +397,7 @@ func (s *SystemTools) CheckHostProgram(prog string, pid int) ([]byte, error) {
 	err = cmd.Wait()
 	s.RemoveToolProcess(pgid, false)
 	if err != nil {
-		log.WithFields(log.Fields{"error": err, "msg": errb.String()}).Error("Done")
+		log.Error().Err(err).Str("msg", errb.String()).Msg("Done")
 		return nil, err
 	}
 	return outb.Bytes(), nil
@@ -461,14 +461,14 @@ func (s *SystemTools) NsRunBinary(pid int, path string) ([]byte, error) {
 	args := []string{NSActRun, "-f", "\"" + path + "\"", "-n", s.GetNetNamespacePath(pid), "-b"}
 	var errb, outb bytes.Buffer
 
-	log.WithFields(log.Fields{"args": args}).Debug("Call nsrun")
+	log.Debug().Interface("args", args).Msg("Call nsrun")
 	cmd := exec.Command(ExecNSTool, args...)
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
 	cmd.Stdout = &outb
 	cmd.Stderr = &errb
 	err := cmd.Start()
 	if err != nil {
-		log.WithFields(log.Fields{"error": err, "msg": errb.String()}).Error("Start")
+		log.Error().Err(err).Str("msg", errb.String()).Msg("Start")
 		return nil, err
 	}
 	pgid := cmd.Process.Pid
@@ -481,7 +481,7 @@ func (s *SystemTools) NsRunBinary(pid int, path string) ([]byte, error) {
 		if err == nil {
 			err = fmt.Errorf("Error executing nsrun")
 		}
-		log.WithFields(log.Fields{"error": err, "msg": errb.String()}).Error("")
+		log.Error().Err(err).Str("msg", errb.String()).Msg("")
 		return nil, err
 	}
 	return out, nil
@@ -507,14 +507,14 @@ func (s *SystemTools) NsRunScriptFile(pid int, path string) ([]byte, error) {
 	args := []string{NSActRun, "-f", path, "-m", s.GetMountNamespacePath(pid)}
 	var errb, outb bytes.Buffer
 
-	log.WithFields(log.Fields{"args": args}).Debug("Call nsrun")
+	log.Debug().Interface("args", args).Msg("Call nsrun")
 	cmd := exec.Command(ExecNSTool, args...)
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
 	cmd.Stdout = &outb
 	cmd.Stderr = &errb
 	err := cmd.Start()
 	if err != nil {
-		log.WithFields(log.Fields{"error": err, "msg": errb.String()}).Error("Start")
+		log.Error().Err(err).Str("msg", errb.String()).Msg("Start")
 		return nil, err
 	}
 	pgid := cmd.Process.Pid
@@ -526,7 +526,7 @@ func (s *SystemTools) NsRunScriptFile(pid int, path string) ([]byte, error) {
 		if err == nil {
 			err = fmt.Errorf("Error executing nsrun")
 		}
-		log.WithFields(log.Fields{"error": err, "msg": errb.String()}).Debug("")
+		log.Debug().Err(err).Str("msg", errb.String()).Msg("")
 		return nil, err
 	}
 	return out, nil
@@ -586,7 +586,7 @@ func (s *SystemTools) GetProcessName(pid int) (string, int, error) {
 func (s *SystemTools) GetFileHash(pid int, path string) ([]byte, error) {
 	data, err := s.ReadContainerFile(path, pid, 0, 0)
 	if err != nil {
-		log.WithFields(log.Fields{"error": err}).Error("Get file hash fail")
+		log.Error().Err(err).Msg("Get file hash fail")
 		return nil, err
 	} else {
 		sha := sha256.Sum256(data)
@@ -606,7 +606,7 @@ func (s *SystemTools) ParseContainerFilePath(path string) (int, string) {
 	a := strings.Index(path, s.procDir)
 	b := strings.Index(path, "/root/")
 	if a < 0 || b < 0 {
-		log.Error("Parse path fail")
+		log.Error().Msg("Parse path fail")
 		return 0, ""
 	}
 	str := path[a+len(s.procDir) : b]
@@ -676,7 +676,7 @@ func (s *SystemTools) ReadContainerFile(filePath string, pid, start, length int)
 func (s *SystemTools) IsOpenshift() (bool, error) {
 	fd, err := os.Open(s.procDir)
 	if err != nil {
-		log.Error("Read process directory fail")
+		log.Error().Msg("Read process directory fail")
 		return false, err
 	}
 	defer fd.Close()
@@ -709,7 +709,7 @@ func (s *SystemTools) IsOpenshift() (bool, error) {
 
 			// openshift 4.x
 			if exepath, err := s.GetFilePath(pid); err == nil && strings.HasSuffix(exepath, "/openshift-sdn") {
-				log.Info("oc 4.x")
+				log.Info().Msg("oc 4.x")
 				return true, nil
 			}
 		}
@@ -720,13 +720,13 @@ func (s *SystemTools) IsOpenshift() (bool, error) {
 
 func (s *SystemTools) KillCommandSubtree(pgid int, info string) {
 	if err := syscall.Kill(-pgid, syscall.SIGKILL); err != nil {
-		log.WithFields(log.Fields{"pgid": pgid, "error": err}).Debug("TOOLP: can not signal")
+		log.Debug().Int("pgid", pgid).Err(err).Msg("TOOLP: can not signal")
 	} else {
-		log.WithFields(log.Fields{"pgid": pgid}).Debug("TOOLP:")
+		log.Debug().Int("pgid", pgid).Msg("TOOLP:")
 	}
 }
 
-//return true if file size over limit
+// return true if file size over limit
 func (s *SystemTools) NsGetFile(filePath string, pid int, binary bool, start, len int) ([]byte, error) {
 	var errb bytes.Buffer
 	args := []string{
@@ -747,7 +747,7 @@ func (s *SystemTools) NsGetFile(filePath string, pid int, binary bool, start, le
 	cmd.Stderr = &errb
 	out, err := cmd.Output()
 	if err != nil {
-		log.WithFields(log.Fields{"error": err, "msg": errb.String()}).Debug("nsget return error")
+		log.Debug().Err(err).Str("msg", errb.String()).Msg("nsget return error")
 		if ee, ok := err.(*exec.ExitError); ok {
 			status := s.GetExitStatus(ee)
 			if status == 2 {
@@ -757,13 +757,13 @@ func (s *SystemTools) NsGetFile(filePath string, pid int, binary bool, start, le
 		return nil, err
 	}
 	if errb.Len() != 0 {
-		log.WithFields(log.Fields{"err": errb.String()}).Debug("nsget return error")
+		log.Debug().Str("err", errb.String()).Msg("nsget return error")
 		return nil, fmt.Errorf(errb.String())
 	}
 	if binary {
 		out, err = base64.StdEncoding.DecodeString(string(out))
 		if err != nil {
-			log.WithFields(log.Fields{"err": err}).Debug("base64 DecodeString fail")
+			log.Debug().Err(err).Msg("base64 DecodeString fail")
 			return nil, err
 		}
 	}

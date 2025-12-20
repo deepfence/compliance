@@ -2,14 +2,15 @@ package system
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"sync"
+
+	"github.com/rs/zerolog/log"
 )
 
-/////////////////////////////////////////////////////////////
+// ///////////////////////////////////////////////////////////
 // Record and trace the namespace processes in the system
 // Kill them during process exiting stages
-/////////////////////////////////////////////////////////////
+// ///////////////////////////////////////////////////////////
 type toolProcessMonitor struct {
 	mutex sync.Mutex
 	pMap  map[int]string
@@ -23,7 +24,7 @@ func (s *SystemTools) AddToolProcess(pgid, pid int, exec, cmds string) {
 	toolProc.mutex.Lock()
 	defer toolProc.mutex.Unlock()
 	if info, ok := toolProc.pMap[pgid]; ok {
-		log.WithFields(log.Fields{"pgid": pgid, "info": info, "exec": exec, "cmds": cmds}).Debug("TOOLP: duplicate entry")
+		log.Debug().Int("pgid", pgid).Str("info", info).Str("exec", exec).Str("cmds", cmds).Msg("TOOLP: duplicate entry")
 		return
 	}
 
@@ -51,7 +52,7 @@ func (s *SystemTools) ShowToolProcesses() {
 	toolProc.mutex.Lock()
 	defer toolProc.mutex.Unlock()
 	for pgid, info := range toolProc.pMap {
-		log.WithFields(log.Fields{"pgid": pgid, "info": info}).Debug("TOOLP:")
+		log.Debug().Int("pgid", pgid).Str("info", info).Msg("TOOLP:")
 	}
 }
 

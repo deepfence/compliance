@@ -2,8 +2,6 @@ package share
 
 import (
 	"time"
-
-	"github.com/aws/aws-sdk-go/aws/endpoints"
 )
 
 const DefaultCVEDBName = "cvedb"
@@ -196,25 +194,67 @@ const (
 	CloudResError   = "error"
 )
 
+// AWS Regions - migrated from aws-sdk-go v1 to direct string constants
+// These are standard AWS region identifiers compatible with AWS SDK v2
+// Updated: December 2024 - Includes all currently available regions
 var AwsRegionAll = []string{
-	endpoints.ApEast1RegionID,
-	endpoints.ApNortheast1RegionID,
-	endpoints.ApNortheast2RegionID,
-	endpoints.ApSouth1RegionID,
-	endpoints.ApSoutheast1RegionID,
-	endpoints.ApSoutheast2RegionID,
-	endpoints.CaCentral1RegionID,
-	endpoints.EuCentral1RegionID,
-	endpoints.EuNorth1RegionID,
-	endpoints.EuWest1RegionID,
-	endpoints.EuWest2RegionID,
-	endpoints.EuWest3RegionID,
-	endpoints.MeSouth1RegionID,
-	endpoints.SaEast1RegionID,
-	endpoints.UsEast1RegionID,
-	endpoints.UsEast2RegionID,
-	endpoints.UsWest1RegionID,
-	endpoints.UsWest2RegionID,
+	// US Regions
+	"us-east-1", // N. Virginia
+	"us-east-2", // Ohio
+	"us-west-1", // N. California
+	"us-west-2", // Oregon
+
+	// Canada
+	"ca-central-1", // Central
+	"ca-west-1",    // Calgary
+
+	// Mexico
+	"mx-central-1", // Central
+
+	// South America
+	"sa-east-1", // São Paulo
+
+	// Europe
+	"eu-central-1", // Frankfurt
+	"eu-central-2", // Zurich
+	"eu-north-1",   // Stockholm
+	"eu-south-1",   // Milan
+	"eu-south-2",   // Spain
+	"eu-west-1",    // Ireland
+	"eu-west-2",    // London
+	"eu-west-3",    // Paris
+
+	// Middle East
+	"me-central-1", // UAE
+	"me-south-1",   // Bahrain
+	"il-central-1", // Tel Aviv
+
+	// Africa
+	"af-south-1", // Cape Town
+
+	// Asia Pacific
+	"ap-east-1",      // Hong Kong
+	"ap-east-2",      // Taipei
+	"ap-northeast-1", // Tokyo
+	"ap-northeast-2", // Seoul
+	"ap-northeast-3", // Osaka
+	"ap-south-1",     // Mumbai
+	"ap-south-2",     // Hyderabad
+	"ap-southeast-1", // Singapore
+	"ap-southeast-2", // Sydney
+	"ap-southeast-3", // Jakarta
+	"ap-southeast-4", // Melbourne
+	"ap-southeast-5", // Malaysia
+	"ap-southeast-6", // New Zealand
+	"ap-southeast-7", // Thailand
+
+	// AWS China (separate partition)
+	// "cn-north-1",     // Beijing - Requires separate credentials
+	// "cn-northwest-1", // Ningxia - Requires separate credentials
+
+	// AWS GovCloud (US) (separate partition)
+	// "us-gov-east-1", // GovCloud US-East - Requires separate credentials
+	// "us-gov-west-1", // GovCloud US-West - Requires separate credentials
 }
 
 const (

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"os"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 type Script struct {
@@ -29,14 +29,14 @@ func LoadConfig() (map[string]Script, error) {
 	configFile, err := os.Open(configFile)
 	defer func() { _ = configFile.Close() }()
 	if err != nil {
-		log.Error("error in reading config json file:" + err.Error())
+		log.Error().Err(err).Msg("error in reading config json file")
 		return nil, err
 	}
 	jsonParser := json.NewDecoder(configFile)
 	var config map[string]Script
 	err = jsonParser.Decode(&config)
 	if err != nil {
-		log.Error("error in parsing config json:" + err.Error())
+		log.Error().Err(err).Msg("error in parsing config json")
 		return nil, err
 	}
 	return config, nil

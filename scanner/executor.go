@@ -11,7 +11,7 @@ import (
 	"strings"
 	"syscall"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 type Bench struct {
@@ -58,7 +58,7 @@ func (b *Bench) RunScripts(ctx context.Context) ([]benchItem, error) {
 		err := cmd.Start()
 		if err != nil {
 			if ctx.Err() != context.Canceled {
-				log.WithFields(log.Fields{"error": err, "msg": errb.String()}).Error("Start")
+				log.Error().Err(err).Str("msg", errb.String()).Msg("Start")
 			}
 			return nil, err
 		}
@@ -71,17 +71,17 @@ func (b *Bench) RunScripts(ctx context.Context) ([]benchItem, error) {
 			if err == nil {
 				err = fmt.Errorf("error executing script")
 			}
-			log.WithFields(log.Fields{"error": err, "msg": errb.String()}).Error("Done")
+			log.Error().Err(err).Str("msg", errb.String()).Msg("Done")
 			return nil, err
 		}
 		items := b.getBenchMsg(out)
 		for _, item := range items {
 			s, err := json.Marshal(item)
 			if err != nil {
-				log.Error(err.Error())
+				log.Error().Err(err).Msg("")
 				continue
 			}
-			log.Debug(string(s))
+			log.Debug().Str("item", string(s)).Msg("benchmark item")
 		}
 		return items, nil
 	}

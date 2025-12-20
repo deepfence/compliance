@@ -19,7 +19,7 @@ import (
 	"syscall"
 	"time"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 const neuvectorContainer = "/usr/local/bin/.nvcontainer"
@@ -416,7 +416,8 @@ func parseUint(s string, base, bitSize int) (uint64, error) {
 }
 
 // Parses a cgroup param and returns as name, value
-//  i.e. "io_service_bytes 1234" will return as io_service_bytes, 1234
+//
+//	i.e. "io_service_bytes 1234" will return as io_service_bytes, 1234
 func getCgroupParamKeyValue(t string) (string, uint64, error) {
 	parts := strings.Fields(t)
 	switch len(parts) {
@@ -452,7 +453,7 @@ func getCgroupParamUint(cgroupPath, cgroupFile string) (uint64, error) {
 	return res, nil
 }
 
-////
+// //
 func getMemoryData(path, name string) (MemoryData, error) {
 	memoryData := MemoryData{}
 
@@ -505,7 +506,6 @@ func getMemoryData(path, name string) (MemoryData, error) {
 	return memoryData, nil
 }
 
-//
 func (s *SystemTools) getMemoryStats(path string, mStats *CgroupMemoryStats, bFullSet bool) error {
 	// Set stats from memory.stat.
 	filePath := filepath.Join(path, "memory.stat")
@@ -673,7 +673,6 @@ func (s *SystemTools) GetContainerCPUUsage(cgroupPath string) (uint64, error) {
 	return getCgroupParamUint(cgroupPath, "cpuacct.usage")
 }
 
-//
 func (s *SystemTools) getContainerMemoryWorkingSetUsage() (uint64, error) {
 	mStats := CgroupMemoryStats{Stats: make(map[string]uint64)}
 	if err := s.getMemoryStats(s.cgroupMemoryDir, &mStats, false); err != nil {
@@ -682,7 +681,6 @@ func (s *SystemTools) getContainerMemoryWorkingSetUsage() (uint64, error) {
 	return mStats.WorkingSet, nil
 }
 
-//
 func (s *SystemTools) GetContainerMemoryStats() (*CgroupMemoryStats, error) {
 	mStats := &CgroupMemoryStats{Stats: make(map[string]uint64)}
 	if err := s.getMemoryStats(s.cgroupMemoryDir, mStats, false); err != nil {
@@ -691,7 +689,6 @@ func (s *SystemTools) GetContainerMemoryStats() (*CgroupMemoryStats, error) {
 	return mStats, nil
 }
 
-//
 func (s *SystemTools) setMemoryForceEmpty() error {
 	if s.cgroupVersion == cgroup_v2 {
 		return errUnsupported
@@ -709,10 +706,10 @@ func (s *SystemTools) CGroupMemoryStatReset(threshold uint64) bool {
 	usage, err := s.getContainerMemoryWorkingSetUsage()
 	if err == nil {
 		if usage > threshold {
-			log.WithFields(log.Fields{"usage": usage, "threshold": threshold}).Info()
+			log.Info().Uint64("usage", usage).Uint64("threshold", threshold).Msg("")
 			go func() {
 				if err := s.setMemoryForceEmpty(); err != nil && err != errUnsupported {
-					log.WithFields(log.Fields{"err": err}).Error()
+					log.Error().Err(err).Msg("")
 				}
 			}()
 			return true
@@ -722,9 +719,10 @@ func (s *SystemTools) CGroupMemoryStatReset(threshold uint64) bool {
 }
 
 // MemOomNotifier sends pressure level notifications
-//  "low": system is reclaiming memory for new allocations.
-//  "medium": system is experiencing medium memory pressure, the system might be making swap, paging out active file caches, etc.
-//  "critical": system is actively thrashing, it is about to out of memory (OOM) or even the in-kernel OOM killer is on its way to trigger.
+//
+//	"low": system is reclaiming memory for new allocations.
+//	"medium": system is experiencing medium memory pressure, the system might be making swap, paging out active file caches, etc.
+//	"critical": system is actively thrashing, it is about to out of memory (OOM) or even the in-kernel OOM killer is on its way to trigger.
 func (s *SystemTools) registerCGroupMemoryPressureNotifier() (int, int, int, error) {
 	if s.cgroupVersion == cgroup_v2 {
 		return -1, -1, -1, errUnsupported
@@ -756,9 +754,11 @@ func (s *SystemTools) registerCGroupMemoryPressureNotifier() (int, int, int, err
 }
 
 // Linux kernel: mm/vmpressure.c
-// 	VMPRESSURE_LOW = 0,
+//
+//	VMPRESSURE_LOW = 0,
 //	VMPRESSURE_MEDIUM, <== 1, 60%
 //	VMPRESSURE_CRITICAL, <== 2, 95%
+//
 // These thresholds are used when we account memory pressure through
 // scanned/reclaimed ratio. The current values were chosen empirically. In
 // essence, they are percents: the higher the value, the more number
@@ -766,7 +766,7 @@ func (s *SystemTools) registerCGroupMemoryPressureNotifier() (int, int, int, err
 func (s *SystemTools) MonitorMemoryPressureEvents(threshold uint64, callback MemoryPressureCallback) error {
 	ctlfd, watchfd, eventfd, err := s.registerCGroupMemoryPressureNotifier()
 	if err != nil {
-		log.WithFields(log.Fields{"error": err}).Error()
+		log.Error().Err(err).Msg("")
 		return err
 	}
 
@@ -776,7 +776,7 @@ func (s *SystemTools) MonitorMemoryPressureEvents(threshold uint64, callback Mem
 		for {
 			buf := make([]byte, 8)
 			if _, err = syscall.Read(eventfd, buf); err != nil {
-				log.WithFields(log.Fields{"error": err}).Error()
+				log.Error().Err(err).Msg("")
 				errorCh <- err
 				return
 			}
@@ -827,7 +827,7 @@ func (s *SystemTools) MonitorMemoryPressureEvents(threshold uint64, callback Mem
 				s.getMemoryStats(s.cgroupMemoryDir, &mStats, true)
 				// skip the false alarm
 				if mStats.WorkingSet < threshold {
-					log.WithFields(log.Fields{"workingSet": mStats.WorkingSet, "threshold": threshold, "level": level}).Debug("Change Event")
+					log.Debug().Uint64("workingSet", mStats.WorkingSet).Uint64("threshold", threshold).Uint64("level", level).Msg("Change Event")
 					action = false
 					level = 0
 				}
@@ -852,20 +852,23 @@ func (s *SystemTools) MonitorMemoryPressureEvents(threshold uint64, callback Mem
 }
 
 /*
-	fstab(5):
+fstab(5):
 
-	The first field (fs_spec): the device to be mounted
-	The second field (fs_file): the mount point (target) for the filesystem.
-	The third field (fs_vfstype): the type of the filesystem.
-	The fourth field (fs_mntops): the mount options associated with the filesystem.
-	The fifth field (fs_freq)
-	The sixth field (fs_passno)
+The first field (fs_spec): the device to be mounted
+The second field (fs_file): the mount point (target) for the filesystem.
+The third field (fs_vfstype): the type of the filesystem.
+The fourth field (fs_mntops): the mount options associated with the filesystem.
+The fifth field (fs_freq)
+The sixth field (fs_passno)
 
-	Examples:
-	(1) single-mount:
-		"overlay / overlay rw,......""
-	(2) multiple-mounts:
-	    "overlay /run/containerd/io.containerd.runtime.v2.task/k8s.io/5e14.../rootfs "
+Examples:
+(1) single-mount:
+
+	"overlay / overlay rw,......""
+
+(2) multiple-mounts:
+
+	"overlay /run/containerd/io.containerd.runtime.v2.task/k8s.io/5e14.../rootfs "
 */
 func readUppperLayerPath(file io.ReadSeeker, id string) (string, string, error) {
 	var rootfs string
@@ -988,7 +991,7 @@ func (s *SystemTools) ReadMountedUppperLayerPath(rootPid int, id string) (string
 
 	path, rootfs, err := readUppperLayerPath(file, id)
 	if err != nil {
-		log.WithFields(log.Fields{"error": err, "pid": rootPid}).Error()
+		log.Error().Err(err).Int("pid", rootPid).Msg("")
 		return "", "", err
 	}
 	return path, rootfs, err
@@ -1003,7 +1006,7 @@ func (s *SystemTools) ReadMountedBtrfsWorkingPath(rootPid int, id string) (strin
 
 	path, rootfs, err := readBtrfsWorkingPath(file, id)
 	if err != nil {
-		log.WithFields(log.Fields{"error": err, "pid": rootPid}).Error()
+		log.Error().Err(err).Int("pid", rootPid).Msg("")
 		return "", "", err
 	}
 	return path, rootfs, err
@@ -1013,13 +1016,13 @@ func readAufsContainerLayerPaths(rootPid int, id string) (string, string, error)
 	var si, cPath, iPath string
 
 	if file, err := os.Open(fmt.Sprintf("/proc/%d/mounts", rootPid)); err != nil {
-		log.WithFields(log.Fields{"error": err, "pid": rootPid}).Error("open")
+		log.Error().Err(err).Int("pid", rootPid).Msg("open")
 		return "", "", err
 	} else {
 		si, err = readAufsSI(file, id)
 		file.Close()
 		if err != nil {
-			log.WithFields(log.Fields{"error": err, "pid": rootPid}).Error("read layers")
+			log.Error().Err(err).Int("pid", rootPid).Msg("read layers")
 			return "", "", err
 		}
 	}
@@ -1067,7 +1070,7 @@ func (s *SystemTools) ReadAufsContainerLayerPath(rootPid int, id string) (string
 	cPath, iPath, err := readAufsContainerLayerPaths(rootPid, id)
 	if err != nil {
 		// 2nd try
-		log.WithFields(log.Fields{"id": id, "pid": rootPid}).Debug("2nd try")
+		log.Debug().Str("id", id).Int("pid", rootPid).Msg("2nd try")
 		return s.LookupAufsContainerLayerPath(rootPid, id)
 	}
 
@@ -1094,7 +1097,7 @@ var containerLayerRef lookupRef = lookupRef{
 const root_pid_1 = "/proc/1/root"
 const docker_aufs_root_path = "/var/lib/docker/aufs/diff"
 
-///
+// /
 func (s *SystemTools) RemoveContainerLayerPath(id string) {
 	containerLayerRef.mutex.Lock()
 	defer containerLayerRef.mutex.Unlock()
@@ -1104,8 +1107,8 @@ func (s *SystemTools) RemoveContainerLayerPath(id string) {
 	}
 }
 
-/// Obsolated: the directory names do not correspond to the layer IDs (this has been true since Docker 1.10).
-/// TODO: discover rootFs
+// / Obsolated: the directory names do not correspond to the layer IDs (this has been true since Docker 1.10).
+// / TODO: discover rootFs
 func (s *SystemTools) LookupAufsContainerLayerPath(pid int, id string) (string, string, error) {
 	var path string
 	var err error
@@ -1121,7 +1124,7 @@ func (s *SystemTools) LookupAufsContainerLayerPath(pid int, id string) (string, 
 	file := fmt.Sprintf("/proc/%d/root/%s", pid, idFileName)
 	if fptr, err := os.Create(file); err != nil {
 		if !strings.HasSuffix(err.Error(), "permission denied") {
-			log.WithFields(log.Fields{"error": err}).Error("touch")
+			log.Error().Err(err).Msg("touch")
 		}
 		return "", "", err
 	} else {
@@ -1131,7 +1134,7 @@ func (s *SystemTools) LookupAufsContainerLayerPath(pid int, id string) (string, 
 
 	path, err = s.matchIdFile(docker_aufs_root_path, idFileName)
 	if err != nil {
-		log.WithFields(log.Fields{"id": id, "pid": pid, "error": err}).Error("match")
+		log.Error().Str("id", id).Int("pid", pid).Err(err).Msg("match")
 		return "", "", err
 	}
 
@@ -1141,7 +1144,7 @@ func (s *SystemTools) LookupAufsContainerLayerPath(pid int, id string) (string, 
 	return path, "", nil
 }
 
-///
+// /
 func (s *SystemTools) matchIdFile(rootPath, idFileName string) (string, error) {
 	d, err := os.Open(filepath.Join(root_pid_1, rootPath))
 	if err != nil {

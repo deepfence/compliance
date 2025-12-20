@@ -5,6 +5,7 @@
 Package share is a generated protocol buffer package.
 
 It is generated from these files:
+
 	common.proto
 	controller_service.proto
 	enforcer_service.proto
@@ -12,6 +13,7 @@ It is generated from these files:
 	scanner_service.proto
 
 It has these top-level messages:
+
 	RPCVoid
 	CLUSProfilingRequest
 	CLUSBoolean
@@ -99,9 +101,13 @@ It has these top-level messages:
 */
 package share
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
+import (
+	fmt "fmt"
+
+	proto "github.com/golang/protobuf/proto"
+
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -366,7 +372,7 @@ func init() {
 	proto.RegisterEnum("share.ProfilingMethod", ProfilingMethod_name, ProfilingMethod_value)
 }
 
-func init() {  }
+func init() {}
 
 var fileDescriptor0 = []byte{
 	// 455 bytes of a gzipped FileDescriptorProto
